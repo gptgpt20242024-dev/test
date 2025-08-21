@@ -32,7 +32,7 @@ $label = $item['label'] ?? null;
     <div class="timeline-item clearfix" style="display: flex; gap: 10px; flex-wrap: wrap">
         <div class="timeline-body" style="flex-grow:1; flex-basis: min-content;">
             <div style="font-weight:bold; min-width:200px;">
-                <a href="<?= Url::toRoute(['/process/step/view', 'id' => $item['step_id']]) ?>" target="_blank">
+                <a href="<?= Url::toRoute(['/process/step/view', 'id' => ($item['step_id']??0)]) ?>" target="_blank">
                     <?= $item['step_name'] ?? ('Шаг ' . $item['step_id']) ?>
                 </a>
             </div>

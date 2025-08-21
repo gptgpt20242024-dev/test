@@ -11,6 +11,7 @@ use app\modules\process\models\task_data\Req3TasksDataItems;
 use app\modules\process\models\task_opers\Req3TaskOperOnline;
 use app\modules\process\models\template_steps\Req3TemplateSteps;
 use DateTimeImmutable;
+use Throwable;
 use Yii;
 use yii\db\Exception;
 use yii\db\Expression;
@@ -66,14 +67,17 @@ class ProcessTaskArchiveService
             }
         }
 
-        if (empty($dataItems)) {
+        /*if (empty($dataItems)) {
             Yii::warning("Задача {$task->id} не содержит данных для архивирования", __METHOD__);
             return false;
-        }
+        }*/
 
         $db = TaskArchive::getDb();
         $transaction = $db->beginTransaction();
         try {
+            TaskArchive::deleteAll(['task_id'=>$task->id]);
+            TaskArchiveEntity::deleteAll(['task_id'=>$task->id]);
+
             $archive = new TaskArchive();
             $archive->task_id = $task->id;
             $archive->task_name = $task->name;
@@ -99,13 +103,14 @@ class ProcessTaskArchiveService
                 }
             }
             $transaction->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
             Yii::error("Ошибка архивации задачи {$task->id}: {$e->getMessage()}", __METHOD__);
             return false;
         }
 
-        return (bool)$task->delete();
+        //return (bool)$task->delete();
+        return true;
     }
 
     protected function collectTaskData(Req3Tasks $task): array
@@ -155,11 +160,12 @@ class ProcessTaskArchiveService
         $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
 
         return [
-            'items'          => $items,
+            'history'          => $items,
             'time_execute'   => $timeExecute,
             'deviation_info' => $deviationInfo,
             'time_template'  => $timeTemplate,
         ];
+
     }
 
     protected function buildTransitionItem(Req3TasksStepHistory $history): array
