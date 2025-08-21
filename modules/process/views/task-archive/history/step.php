@@ -13,7 +13,21 @@ $label = $item['label'] ?? null;
 ?>
 
 <div>
-    <i class="fas fa-shoe-prints" style="background-color: #c5c5c5; color: #fafafa;"></i>
+
+    <?php if ($item['step_is_first']??0): ?>
+        <i class="fas fa-play" style="background-color: #2443ff; color: #fafafa;"></i>
+    <?php elseif ($item['step_is_auto']??0): ?>
+        <i class="fas fa-robot" style="background-color: #54d5d2; color: #fafafa;"></i>
+    <?php elseif ($item['step_is_calls']??0): ?>
+        <i class="fas fa-phone" style="background-color: #d5b154; color: #fafafa;"></i>
+    <?php elseif ($item['step_is_deviation']??0): ?>
+        <i class="fas fa-exclamation-circle" style="background-color: #d55454; color: #fafafa;"></i>
+    <?php elseif ($item['step_is_last']??0): ?>
+        <i class="fas fa-step-forward" style="background-color: #5e9925; color: #fafafa;"></i>
+    <?php else: ?>
+        <i class="fas fa-shoe-prints" style="background-color: #c5c5c5; color: #fafafa;"></i>
+    <?php endif; ?>
+
     <div class="timeline-item clearfix" style="display: flex; gap: 10px; flex-wrap: wrap">
         <div class="timeline-body" style="flex-grow:1; flex-basis: min-content;">
             <div style="font-weight:bold; min-width:200px;">
