@@ -15,17 +15,20 @@ $this->title = 'Архив задач';
 ?>
 
 <div class="task-archive-index">
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="card mb-3">
+        <h4 class="card-header">
+            <?= Html::encode($this->title) ?>
+        </h4>
         <div class="card-body">
             <div class="task-archive-search">
                 <?php $form = ActiveForm::begin([
                     'method' => 'get',
                 ]); ?>
-
-                <?= $form->field($model, 'templateId')->widget(Select2Template::class) ?>
-                <?= $form->field($model, 'templateName') ?>
+                <?= $form->field($model, 'templateIds')->widget(Select2Template::class, [
+                    'options' => ['multiple' => true, 'placeholder' => 'Выберите шаблоны'],
+                ]) ?>
+                <?= $form->field($model, 'name') ?>
                 <?= $form->field($model, 'dateRange', [
                     'addon'   => ['prepend' => ['content' => '<i class="fas fa-calendar-alt"></i>']],
                     'options' => ['class' => 'drp-container form-group']
@@ -51,9 +54,9 @@ $this->title = 'Архив задач';
                 <h5 class="mb-0">
                     <?= Html::a(Html::encode($task->task_name), ['view', 'id' => $task->task_id]) ?>
                 </h5>
-                <small class="text-muted">
+                <div class="text-muted" style="font-size: small">
                     <?= Html::encode($task->template_name) ?>
-                </small>
+                </div>
             </div>
             <div class="card-footer text-muted">
                 Создана: <?= Html::encode($task->task_date_create) ?><br>

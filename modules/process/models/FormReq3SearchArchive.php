@@ -2,20 +2,31 @@
 
 namespace app\modules\process\models;
 
+use app\components\Date;
 use app\modules\process\models\task_archive\TaskArchive;
 use yii\base\Model;
 
 class FormReq3SearchArchive extends Model
 {
-    public $templateId;
-    public $templateName;
+    public $templateIds;
+    public $name;
     public $dateRange;
+
+    public function attributeLabels()
+    {
+        return [
+            'dateRange' => 'Период создания задачи',
+            'name' => 'Название задачи',
+            'templateIds' => 'Шаблоны'
+        ];
+    }
+
 
     public function rules(): array
     {
         return [
-            [['templateId'], 'integer'],
-            [['templateName', 'dateRange'], 'safe'],
+            [['templateIds'], 'integer'],
+            [['name', 'dateRange'], 'safe'],
             ['dateRange', 'validateDateRange'],
         ];
     }
@@ -42,15 +53,17 @@ class FormReq3SearchArchive extends Model
         if (!$this->validate()) {
             $query->where('0=1');
         } else {
-            if ($this->templateId) {
-                $query->andWhere(['template_id' => $this->templateId]);
+            if ($this->templateIds) {
+                $query->andWhere(['template_id' => $this->templateIds]);
             }
-            if ($this->templateName) {
-                $query->andFilterWhere(['like', 'template_name', $this->templateName]);
+            if ($this->name) {
+                $query->andFilterWhere(['like', 'task_name', $this->name]);
             }
             if ($this->dateRange) {
                 [$from, $to] = explode(' - ', $this->dateRange);
-                $query->andWhere(['between', 'task_date_create', $from, $to]);
+                $from = (new Date($from))->format('Y-m-d 00:00:00');
+                $to = (new Date($to))->addDays()->format('Y-m-d 00:00:00');
+                $query->andWhere('task_date_create >= :from AND task_date_create < :to', [':from' => $from, ':to' => $to]);
             }
         }
 

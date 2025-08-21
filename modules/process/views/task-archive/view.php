@@ -8,6 +8,9 @@ use yii\helpers\Html;
 /* @var $items array */
 
 $this->title = "Архив: ".$task->task_name;
+$this->params['breadcrumbs'][] = ['label' => "Архив", 'url' => ['index']];
+$this->params['breadcrumbs'][] = $task->task_name;
+
 
 $statuses = Req3TemplateSteps::LAST_STATUS_NAMES;
 $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
@@ -16,16 +19,16 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
 <div class="task-archive-view">
     <div class="card mb-3">
         <div class="card-header">
-            <?= Html::encode($task->task_name) ?>
+            <h5 class="mb-0"><?= Html::encode($task->task_name) ?></h5>
+            <div style="font-size: small"><?= Html::a($task->template_name, ['/process/templates/view', 'id' => $task->template_id], ['target' => '_blank']) ?></div>
         </div>
         <div class="card-body">
             <p class="mb-0"><strong>ID задачи:</strong> <?= $task->task_id ?></p>
-            <p class="mb-0"><strong>Шаблон:</strong> <?= Html::a($task->template_name, ['/process/templates/view', 'id' => $task->template_id], ['target' => '_blank']) ?></p>
             <p class="mb-0"><strong>Дата создания:</strong> <?= $task->task_date_create ?></p>
-            <p class="mb-0"><strong>Дата начала последнего шага:</strong> <?= $task->task_date_start_step ?></p>
-            <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= $task->date_add_to_archive ?></p>
-            <p class="mb-0"><strong>Последний шаг:</strong> <?= $task->step_is_last ? 'Да' : 'Нет' ?></p>
+            <p class="mb-0"><strong>Дата перехода на последний шаг:</strong> <?= $task->task_date_start_step ?></p>
+            <p class="mb-0"><strong>Шаг был последний:</strong> <?= $task->step_is_last ? 'Да' : 'Нет' ?></p>
             <p class="mb-0"><strong>Статус шага:</strong> <?= $statusLabel ?></p>
+            <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= $task->date_add_to_archive ?></p>
         </div>
     </div>
 
