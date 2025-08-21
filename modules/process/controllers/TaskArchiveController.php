@@ -5,7 +5,7 @@ namespace app\modules\process\controllers;
 use app\controllers\BaseController;
 use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\FormReq3SearchArchive;
-use yii\web\Controller;
+use yii\data\Pagination;
 use yii\web\NotFoundHttpException;
 use Yii;
 
@@ -13,12 +13,24 @@ class TaskArchiveController extends BaseController
 {
     public function actionIndex()
     {
-        $searchModel = new FormReq3SearchArchive();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $model = new FormReq3SearchArchive();
+        $model->load(Yii::$app->request->get(), '');
+
+        $query = $model->find();
+
+        $pager = new Pagination();
+        $pager->pageSize = 50;
+        $pager->totalCount = $query->count();
+
+        $query->limit($pager->limit);
+        $query->offset($pager->offset);
+
+        $tasks = $query->orderBy(['task_id' => SORT_DESC])->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'tasks' => $tasks,
+            'pager' => $pager,
         ]);
     }
 
