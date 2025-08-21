@@ -2,13 +2,14 @@
 
 use app\modules\process\widgets\Select2Template;
 use kartik\widgets\ActiveForm;
+use yii\bootstrap4\LinkPager;
 use yii\helpers\Html;
-use yii\grid\GridView;
 use app\widgets\DateRangePickerWithRanges;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\process\models\FormReq3SearchArchive */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $model app\modules\process\models\FormReq3SearchArchive */
+/* @var $tasks app\modules\process\models\task_archive\TaskArchive[] */
+/* @var $pager yii\data\Pagination */
 
 $this->title = 'Архив задач';
 ?>
@@ -21,9 +22,9 @@ $this->title = 'Архив задач';
             'method' => 'get',
         ]); ?>
 
-        <?= $form->field($searchModel, 'template_id')->widget(Select2Template::class) ?>
-        <?= $form->field($searchModel, 'template_name') ?>
-        <?= $form->field($searchModel, 'dateRange', [
+        <?= $form->field($model, 'template_id')->widget(Select2Template::class) ?>
+        <?= $form->field($model, 'template_name') ?>
+        <?= $form->field($model, 'dateRange', [
             'addon'   => ['prepend' => ['content' => '<i class="fas fa-calendar-alt"></i>']],
             'options' => ['class' => 'drp-container form-group']
         ])->widget(DateRangePickerWithRanges::class, [
@@ -40,20 +41,28 @@ $this->title = 'Архив задач';
         <?php ActiveForm::end(); ?>
     </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            'task_id',
-            'task_name',
-            'template_name',
-            'task_date_create',
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
-                'urlCreator' => function ($action, $model) {
-                    return ['view', 'id' => $model->task_id];
-                }
-            ],
-        ],
-    ]); ?>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Шаблон</th>
+            <th>Дата создания</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($tasks as $task): ?>
+            <tr>
+                <td><?= Html::encode($task->task_id) ?></td>
+                <td><?= Html::encode($task->task_name) ?></td>
+                <td><?= Html::encode($task->template_name) ?></td>
+                <td><?= Html::encode($task->task_date_create) ?></td>
+                <td><?= Html::a('Просмотр', ['view', 'id' => $task->task_id]) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <?= LinkPager::widget(['pagination' => $pager]); ?>
 </div>
