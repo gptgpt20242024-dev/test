@@ -42,13 +42,28 @@ class TaskArchiveController extends BaseController
         }
 
         $items = [];
+        $timeExecute = null;
+        $deviationInfo = [];
+        $timeTemplate = null;
+
         if (!empty($model->data_json)) {
-            $items = json_decode($model->data_json, true) ?: [];
+            $data = json_decode($model->data_json, true) ?: [];
+            if (isset($data['items'])) {
+                $items = $data['items'];
+                $timeExecute = $data['time_execute'] ?? null;
+                $deviationInfo = $data['deviation_info'] ?? [];
+                $timeTemplate = $data['time_template'] ?? null;
+            } else {
+                $items = $data;
+            }
         }
 
         return $this->render('view', [
             'task' => $model,
             'items' => $items,
+            'timeExecute' => $timeExecute,
+            'deviationInfo' => $deviationInfo,
+            'timeTemplate' => $timeTemplate,
         ]);
     }
 }

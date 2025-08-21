@@ -6,6 +6,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $task app\modules\process\models\task_archive\TaskArchive */
 /* @var $items array */
+/* @var $timeExecute array|null */
+/* @var $deviationInfo array */
+/* @var $timeTemplate int|null */
 
 $this->title = "Архив: ".$task->task_name;
 $this->params['breadcrumbs'][] = ['label' => "Архив", 'url' => ['index']];
@@ -39,7 +42,13 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
             <i class="fas fa-caret-down" data-close="1"></i>
         </div>
         <div class="card-body" data-history-content="1" style="display: none; background: #dedede">
-            <?= $this->render('history', ['task' => $task, 'items' => $items]) ?>
+            <?= $this->render('history', [
+                'task' => $task,
+                'items' => $items,
+                'timeExecute' => $timeExecute,
+                'deviationInfo' => $deviationInfo,
+                'timeTemplate' => $timeTemplate,
+            ]) ?>
         </div>
     </div>
 </div>
