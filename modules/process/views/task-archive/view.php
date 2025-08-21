@@ -31,6 +31,7 @@ if (class_exists(Req3TemplateSteps::class) && method_exists(Req3TemplateSteps::c
             <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= Html::encode($task->date_add_to_archive) ?></p>
             <p class="mb-0"><strong>Последний шаг:</strong> <?= $task->step_is_last ? 'Да' : 'Нет' ?></p>
             <p class="mb-0"><strong>Статус шага:</strong> <?= Html::encode($statusLabel) ?></p>
+            <p class="mb-0"><strong>Шаблон:</strong> <?= Html::encode($task->template_name) ?></p>
         </div>
     </div>
 
