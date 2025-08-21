@@ -16,37 +16,35 @@ $this->title = 'Архив задач';
 
 <div class="task-archive-index">
 
+    <?php $form = ActiveForm::begin([
+        'method' => 'get',
+        'action' => 'index'
+    ]); ?>
     <div class="card mb-3">
         <h4 class="card-header">
             <?= Html::encode($this->title) ?>
         </h4>
         <div class="card-body">
-            <div class="task-archive-search">
-                <?php $form = ActiveForm::begin([
-                    'method' => 'get',
-                ]); ?>
-                <?= $form->field($model, 'templateIds')->widget(Select2Template::class, [
-                    'options' => ['multiple' => true, 'placeholder' => 'Выберите шаблоны'],
-                ]) ?>
-                <?= $form->field($model, 'name') ?>
-                <?= $form->field($model, 'dateRange', [
-                    'addon'   => ['prepend' => ['content' => '<i class="fas fa-calendar-alt"></i>']],
-                    'options' => ['class' => 'drp-container form-group']
-                ])->widget(DateRangePickerWithRanges::class, [
-                    'unsetRanges' => ['Сегодня'],
-                    'options'        => ['class' => 'form-control', 'autocomplete' => 'off'],
-                    'useWithAddon'   => true,
-                    'presetDropdown' => false,
-                    'convertFormat'  => true,
-                ]); ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary']) ?>
-                </div>
-                <?php ActiveForm::end(); ?>
-            </div>
+            <?= $form->field($model, 'templateIds')->widget(Select2Template::class, [
+                'options' => ['multiple' => true, 'placeholder' => 'Выберите шаблоны'],
+            ]) ?>
+            <?= $form->field($model, 'name') ?>
+            <?= $form->field($model, 'dateRange', [
+                'addon'   => ['prepend' => ['content' => '<i class="fas fa-calendar-alt"></i>']],
+                'options' => ['class' => 'drp-container form-group']
+            ])->widget(DateRangePickerWithRanges::class, [
+                'unsetRanges'    => ['Сегодня'],
+                'options'        => ['class' => 'form-control', 'autocomplete' => 'off'],
+                'useWithAddon'   => true,
+                'presetDropdown' => false,
+                'convertFormat'  => true,
+            ]); ?>
+        </div>
+        <div class="card-footer">
+            <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
+    <?php ActiveForm::end(); ?>
 
     <?php foreach ($tasks as $task): ?>
         <div class="card mb-3">

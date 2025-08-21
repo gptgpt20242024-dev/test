@@ -21,6 +21,10 @@ class FormReq3SearchArchive extends Model
         ];
     }
 
+    public function formName()
+    {
+        return '';
+    }
 
     public function rules(): array
     {
