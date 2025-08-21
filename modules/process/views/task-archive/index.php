@@ -41,28 +41,22 @@ $this->title = 'Архив задач';
         <?php ActiveForm::end(); ?>
     </div>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Название</th>
-            <th>Шаблон</th>
-            <th>Дата создания</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($tasks as $task): ?>
-            <tr>
-                <td><?= Html::encode($task->task_id) ?></td>
-                <td><?= Html::encode($task->task_name) ?></td>
-                <td><?= Html::encode($task->template_name) ?></td>
-                <td><?= Html::encode($task->task_date_create) ?></td>
-                <td><?= Html::a('Просмотр', ['view', 'id' => $task->task_id]) ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+    <?php foreach ($tasks as $task): ?>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <?= Html::a(Html::encode($task->task_name), ['view', 'id' => $task->task_id]) ?>
+                </h5>
+                <small class="text-muted">
+                    <?= Html::encode($task->template_name) ?>
+                </small>
+            </div>
+            <div class="card-footer text-muted">
+                Создана: <?= Html::encode($task->task_date_create) ?><br>
+                Архивирована: <?= Html::encode($task->date_add_to_archive) ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
 
     <?= LinkPager::widget(['pagination' => $pager]); ?>
 </div>
