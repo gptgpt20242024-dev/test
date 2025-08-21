@@ -150,7 +150,16 @@ class ProcessTaskArchiveService
             }
         }
 
-        return $items;
+        $timeExecute = $task->getTimeExecute();
+        $deviationInfo = $task->getDeviationInfo();
+        $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
+
+        return [
+            'items'          => $items,
+            'time_execute'   => $timeExecute,
+            'deviation_info' => $deviationInfo,
+            'time_template'  => $timeTemplate,
+        ];
     }
 
     protected function buildTransitionItem(Req3TasksStepHistory $history): array
