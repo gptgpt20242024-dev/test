@@ -46,7 +46,7 @@ class TaskArchiveController extends BaseController
             $items = json_decode($model->data_json, true) ?: [];
         }
 
-        return $this->render('history', [
+        return $this->render('view', [
             'task' => $model,
             'items' => $items,
         ]);
