@@ -3,7 +3,6 @@
 namespace app\modules\process\models;
 
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use app\modules\process\models\task_archive\TaskArchive;
 
 class FormReq3SearchArchive extends Model
@@ -36,11 +35,10 @@ class FormReq3SearchArchive extends Model
         }
     }
 
-    public function search(array $params): ActiveDataProvider
+    public function find()
     {
         $query = TaskArchive::find();
 
-        $this->load($params);
         if (!$this->validate()) {
             $query->where('0=1');
         } else {
@@ -56,11 +54,6 @@ class FormReq3SearchArchive extends Model
             }
         }
 
-        return new ActiveDataProvider([
-            'query' => $query,
-            'sort' => [
-                'defaultOrder' => ['task_id' => SORT_DESC],
-            ],
-        ]);
+        return $query;
     }
 }
