@@ -40,4 +40,9 @@ class TaskArchive extends ActiveRecord
             [['task_name', 'template_name'], 'string', 'max' => 255],
         ];
     }
+
+    public function getId()
+    {
+        return $this->task_id;
+    }
 }
