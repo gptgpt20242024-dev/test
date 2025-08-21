@@ -3,25 +3,23 @@
 namespace app\modules\process\services;
 
 use app\modules\process\models\task\Req3Tasks;
-use app\modules\process\models\task\Req3TemplateSteps;
 use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\task_archive\TaskArchiveEntity;
-use yii\db\Expression;
+use app\modules\process\models\task_data\Req3TasksDataItems;
+use app\modules\process\models\template_steps\Req3TemplateSteps;
+use DateTimeImmutable;
 use Yii;
+use yii\db\Exception;
+use yii\db\Expression;
 
-/**
- * Сервис для архивации завершённых задач.
- */
-class ProcessTaskService
+class ProcessTaskArchiveService
 {
     /**
-     * Находит задачи, которые требуется архивировать согласно параметру delete_after_days.
-     *
      * @return Req3Tasks[]
      */
     public function findTasksForArchive(): array
     {
-        $today = new \DateTimeImmutable('today');
+        $today = new DateTimeImmutable('today');
 
         $steps = Req3TemplateSteps::find()
             ->select(['id', 'delete_after_days'])
@@ -46,31 +44,21 @@ class ProcessTaskService
             return [];
         }
 
-        return Req3Tasks::find()
-            ->where(['not', ['req3_tasks.date_start_step' => null]])
-            ->andWhere($condition)
-            ->joinWith(['step.template', 'step.version'])
-            ->all();
+        return Req3Tasks::find()->with(['step.template'])->andWhere($condition)->all();
     }
 
-    /**
-     * Архивирует задачу и удаляет её из основной таблицы.
-     */
     public function archiveTask(Req3Tasks $task): bool
     {
-        $version = $task->step->version;
-        $archiveIdentifiers = $version->setting['archiveIdentifiers'] ?? [];
+        $archiveIdentifiers = $task->version->setting['archiveIdentifiers'] ?? [];
 
-        // собираем уникальные данные по идентификаторам, чтобы избежать дубликатов
+        /** @var Req3TasksDataItems[] $dataItems */
         $dataItems = [];
-        $unique = [];
         foreach ($archiveIdentifiers as $identifierId) {
             $items = $task->getDataIdentifier($identifierId, true, true);
-            foreach ($items as $item) {
-                $key = $item->value_id . ':' . $item->type;
-                if (!isset($unique[$key])) {
-                    $unique[$key] = true;
-                    $dataItems[] = $item;
+            if (!empty($items)) {
+                foreach ($items as $item) {
+                    $key = $item->value_id . ':' . $item->type;
+                    $dataItems[$key] = $item;
                 }
             }
         }
@@ -91,13 +79,11 @@ class ProcessTaskService
             $archive->task_date_create = $task->create_date;
             $archive->task_date_start_step = $task->date_start_step;
             $archive->date_add_to_archive = new Expression('NOW()');
-            $archive->step_is_last = (int)$task->step->is_last;
-            $archive->step_last_status = $task->step->last_status;
-            $archive->data_json = json_encode($this->collectTaskData($task));
-
+            $archive->step_is_last = (int)$task->step->is_last ?? 0;
+            $archive->step_last_status = $task->step->last_status ?? 0;
+            $archive->data_json = json_encode($this->collectTaskData($task), JSON_UNESCAPED_UNICODE);
             if (!$archive->save()) {
-                $transaction->rollBack();
-                return false;
+                throw new Exception("TaskArchive: " . implode(", ", $archive->getFirstErrors()));
             }
 
             foreach ($dataItems as $item) {
@@ -106,11 +92,9 @@ class ProcessTaskService
                 $link->value_id = $item->value_id;
                 $link->identifier_type = $item->type;
                 if (!$link->save()) {
-                    $transaction->rollBack();
-                    return false;
+                    throw new Exception("TaskArchiveEntity: " . implode(", ", $archive->getFirstErrors()));
                 }
             }
-
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();
@@ -121,21 +105,16 @@ class ProcessTaskService
         return (bool)$task->delete();
     }
 
-    /**
-     * Заглушка для сбора дополнительных данных задачи для архива.
-     */
     protected function collectTaskData(Req3Tasks $task): array
     {
         return [];
     }
 
-    /**
-     * Архивирует все доступные задачи.
-     */
     public function archiveAvailableTasks(): void
     {
         foreach ($this->findTasksForArchive() as $task) {
             $this->archiveTask($task);
         }
     }
+
 }

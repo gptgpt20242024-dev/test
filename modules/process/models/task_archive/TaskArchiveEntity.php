@@ -8,16 +8,13 @@ use yii\db\ActiveRecord;
 /**
  * Связь архивной задачи с сущностями.
  *
- * @property int $id               Первичный ключ
- * @property int $task_id          ID задачи из архива
- * @property int $value_id         ID связанной сущности
- * @property int $identifier_type  Тип идентификатора сущности
+ * @property int $id
+ * @property int $task_id
+ * @property int $value_id
+ * @property int $identifier_type
  */
 class TaskArchiveEntity extends ActiveRecord
 {
-    /**
-     * Используем подключение к БД архива.
-     */
     public static function getDb()
     {
         return Yii::$app->get('db_req3_archive');
@@ -25,12 +22,7 @@ class TaskArchiveEntity extends ActiveRecord
 
     public static function tableName(): string
     {
-        return '{{%req3_task_archive_entity}}';
-    }
-
-    public static function primaryKey(): array
-    {
-        return ['id'];
+        return 'req3_task_archive_entity';
     }
 
     public function rules(): array
