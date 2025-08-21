@@ -2,20 +2,20 @@
 
 namespace app\modules\process\models;
 
-use yii\base\Model;
 use app\modules\process\models\task_archive\TaskArchive;
+use yii\base\Model;
 
 class FormReq3SearchArchive extends Model
 {
-    public $template_id;
-    public $template_name;
+    public $templateId;
+    public $templateName;
     public $dateRange;
 
     public function rules(): array
     {
         return [
-            [['template_id'], 'integer'],
-            [['template_name', 'dateRange'], 'safe'],
+            [['templateId'], 'integer'],
+            [['templateName', 'dateRange'], 'safe'],
             ['dateRange', 'validateDateRange'],
         ];
     }
@@ -42,11 +42,11 @@ class FormReq3SearchArchive extends Model
         if (!$this->validate()) {
             $query->where('0=1');
         } else {
-            if ($this->template_id) {
-                $query->andWhere(['template_id' => $this->template_id]);
+            if ($this->templateId) {
+                $query->andWhere(['template_id' => $this->templateId]);
             }
-            if ($this->template_name) {
-                $query->andFilterWhere(['like', 'template_name', $this->template_name]);
+            if ($this->templateName) {
+                $query->andFilterWhere(['like', 'template_name', $this->templateName]);
             }
             if ($this->dateRange) {
                 [$from, $to] = explode(' - ', $this->dateRange);

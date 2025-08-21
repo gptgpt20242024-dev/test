@@ -1,10 +1,10 @@
 <?php
 
 use app\modules\process\widgets\Select2Template;
+use app\widgets\DateRangePickerWithRanges;
 use kartik\widgets\ActiveForm;
 use yii\bootstrap4\LinkPager;
 use yii\helpers\Html;
-use app\widgets\DateRangePickerWithRanges;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\process\models\FormReq3SearchArchive */
@@ -22,8 +22,8 @@ $this->title = 'Архив задач';
             'method' => 'get',
         ]); ?>
 
-        <?= $form->field($model, 'template_id')->widget(Select2Template::class) ?>
-        <?= $form->field($model, 'template_name') ?>
+        <?= $form->field($model, 'templateId')->widget(Select2Template::class) ?>
+        <?= $form->field($model, 'templateName') ?>
         <?= $form->field($model, 'dateRange', [
             'addon'   => ['prepend' => ['content' => '<i class="fas fa-calendar-alt"></i>']],
             'options' => ['class' => 'drp-container form-group']
@@ -57,6 +57,7 @@ $this->title = 'Архив задач';
             </div>
         </div>
     <?php endforeach; ?>
+
 
     <?= LinkPager::widget(['pagination' => $pager]); ?>
 </div>
