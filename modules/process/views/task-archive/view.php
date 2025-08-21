@@ -1,21 +1,16 @@
 <?php
 
-use yii\helpers\Html;
 use app\modules\process\models\template_steps\Req3TemplateSteps;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $task app\modules\process\models\task_archive\TaskArchive */
 /* @var $items array */
 
-$this->title = $task->task_name;
+$this->title = "Архив: ".$task->task_name;
 
-$statusLabel = $task->step_last_status;
-if (class_exists(Req3TemplateSteps::class) && method_exists(Req3TemplateSteps::class, 'statusList')) {
-    $statuses = Req3TemplateSteps::statusList();
-    if (is_array($statuses)) {
-        $statusLabel = $statuses[$task->step_last_status] ?? $statusLabel;
-    }
-}
+$statuses = Req3TemplateSteps::LAST_STATUS_NAMES;
+$statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
 ?>
 
 <div class="task-archive-view">
@@ -24,14 +19,13 @@ if (class_exists(Req3TemplateSteps::class) && method_exists(Req3TemplateSteps::c
             <?= Html::encode($task->task_name) ?>
         </div>
         <div class="card-body">
-            <p class="mb-0"><strong>ID задачи:</strong> <?= Html::encode($task->task_id) ?></p>
-            <p class="mb-0"><strong>Шаблон:</strong> <?= Html::encode($task->template_name) ?> (ID: <?= Html::encode($task->template_id) ?>)</p>
-            <p class="mb-0"><strong>Дата создания:</strong> <?= Html::encode($task->task_date_create) ?></p>
-            <p class="mb-0"><strong>Дата начала шага:</strong> <?= Html::encode($task->task_date_start_step) ?></p>
-            <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= Html::encode($task->date_add_to_archive) ?></p>
+            <p class="mb-0"><strong>ID задачи:</strong> <?= $task->task_id ?></p>
+            <p class="mb-0"><strong>Шаблон:</strong> <?= Html::a($task->template_name, ['/process/templates/view', 'id' => $task->template_id], ['target' => '_blank']) ?></p>
+            <p class="mb-0"><strong>Дата создания:</strong> <?= $task->task_date_create ?></p>
+            <p class="mb-0"><strong>Дата начала последнего шага:</strong> <?= $task->task_date_start_step ?></p>
+            <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= $task->date_add_to_archive ?></p>
             <p class="mb-0"><strong>Последний шаг:</strong> <?= $task->step_is_last ? 'Да' : 'Нет' ?></p>
-            <p class="mb-0"><strong>Статус шага:</strong> <?= Html::encode($statusLabel) ?></p>
-            <p class="mb-0"><strong>Шаблон:</strong> <?= Html::encode($task->template_name) ?></p>
+            <p class="mb-0"><strong>Статус шага:</strong> <?= $statusLabel ?></p>
         </div>
     </div>
 
@@ -41,7 +35,7 @@ if (class_exists(Req3TemplateSteps::class) && method_exists(Req3TemplateSteps::c
             <i class="fas fa-caret-up" data-open="1"></i>
             <i class="fas fa-caret-down" data-close="1"></i>
         </div>
-        <div class="card-body" data-history-content="1" style="display: none">
+        <div class="card-body" data-history-content="1" style="display: none; background: #dedede">
             <?= $this->render('history', ['task' => $task, 'items' => $items]) ?>
         </div>
     </div>
