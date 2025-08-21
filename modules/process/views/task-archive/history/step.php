@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Date;
+use app\models\Opers;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -35,6 +36,22 @@ $label = $item['label'] ?? null;
                     <?= $item['step_name'] ?? ('Шаг ' . $item['step_id']) ?>
                 </a>
             </div>
+            <?php if (count($online) > 0): ?>
+                <div data-view-online="1" style="font-size: small;">
+                    <div style="color: #aeaeae" data-spoiler data-container="[data-view-online]" data-content="[data-spoiler-content-online]">
+                        Сколько времени исполнители были на шаге
+                        <i class="fas fa-caret-up" data-open="1"></i>
+                        <i class="fas fa-caret-down" data-close="1"></i>
+                    </div>
+                    <div data-spoiler-content-online="1" style="display: none">
+                        <?php foreach ($online as $oper_id => $second): ?>
+                            <div>
+                                <span style="color: #d36148; font-weight: bold;"><?= Opers::getFioOrFioDeletedHtmlById($oper_id) ?></span>: <?= Date::secondsToText($second, 2) ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
         <span class="time" style="margin-left:auto; white-space:nowrap">
             <div>
@@ -45,6 +62,33 @@ $label = $item['label'] ?? null;
             <?php if ($label): ?>
                 <span class="badge badge-light" style="background-color: <?= $label['color'] ?>"><?= $label['label'] ?></span>
             <?php endif; ?>
+
+            <?php if (($item['escalation']??0) > 0): ?>
+                <div class="text-danger">
+                    <i class="fas fa-meh"></i>
+                    <span>Эскалация: <?= $item['escalation'] ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php if ((!empty($item['end_date']) && $item['is_overdue'])): ?>
+                <div class="text-danger">
+                    <i class="fas fa-meh"></i>
+                    <span>Просрочен</span>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($item['step_is_deviation']??0): ?>
+                <?php if (!($item['is_deviation_job_complete']??0)): ?>
+                    <div style="color: #317728">
+                    <i class="fas fa-check-double" style="color: #00c625"></i> Работа выполнена
+                </div>
+                <?php else: ?>
+                    <div style="color: #a9a9a9">
+                    <i class="fas fa-times"></i> Работа не выполнена
+                </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
         </span>
     </div>
 </div>
