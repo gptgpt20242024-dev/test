@@ -2,13 +2,14 @@
 
 namespace app\modules\process\services;
 
+use app\modules\process\models\Req3FunctionBase;
 use app\modules\process\models\task\Req3Tasks;
+use app\modules\process\models\task\Req3TasksStepHistory;
 use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\task_archive\TaskArchiveEntity;
 use app\modules\process\models\task_data\Req3TasksDataItems;
-use app\modules\process\models\template_steps\Req3TemplateSteps;
-use app\modules\process\models\Req3FunctionBase;
 use app\modules\process\models\task_opers\Req3TaskOperOnline;
+use app\modules\process\models\template_steps\Req3TemplateSteps;
 use DateTimeImmutable;
 use Yii;
 use yii\db\Exception;
@@ -152,7 +153,7 @@ class ProcessTaskArchiveService
         return $items;
     }
 
-    protected function buildTransitionItem($history): array
+    protected function buildTransitionItem(Req3TasksStepHistory $history): array
     {
         return [
             'time'     => strtotime($history->start_date),
@@ -167,7 +168,7 @@ class ProcessTaskArchiveService
         ];
     }
 
-    protected function buildStepItem(Req3Tasks $task, $history, array $data): array
+    protected function buildStepItem(Req3Tasks $task, Req3TasksStepHistory $history, array $data): array
     {
         $labelObj = empty($history->end_date) ? ($task->queue_label ?? null) : ($history->queue_label ?? null);
         $step = $history->step;
@@ -176,11 +177,11 @@ class ProcessTaskArchiveService
             'end_date'   => $history->end_date,
             'step_id'    => $history->step_id,
             'step_name'  => $step ? $step->name : null,
-            'step_is_first' => $step ? (bool)$step->is_first : false,
-            'step_is_auto'  => $step ? (bool)$step->is_auto : false,
-            'step_is_calls' => $step ? (bool)$step->is_calls : false,
-            'step_is_last'  => $step ? (bool)$step->is_last : false,
-            'step_is_deviation' => $step ? (bool)$step->isDeviation() : false,
+            'step_is_first' => $step && $step->is_first,
+            'step_is_auto'  => $step && $step->is_auto,
+            'step_is_calls' => $step && $step->is_calls,
+            'step_is_last'  => $step && $step->is_last,
+            'step_is_deviation' => $step && $step->isDeviation(),
             'escalation' => $history->escalation,
             'is_overdue' => (bool)$history->is_overdue,
             'is_deviation_job_complete' => $history->isDeviationJobComplete(),
@@ -225,7 +226,7 @@ class ProcessTaskArchiveService
         return $stepItem;
     }
 
-    protected function buildTransitionDetailItems($history, array $data, bool &$before_full_info_transitions): array
+    protected function buildTransitionDetailItems(Req3TasksStepHistory $history, array $data, bool &$before_full_info_transitions): array
     {
         $items = [];
 
