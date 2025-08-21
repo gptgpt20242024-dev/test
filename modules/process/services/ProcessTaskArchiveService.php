@@ -7,6 +7,8 @@ use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\task_archive\TaskArchiveEntity;
 use app\modules\process\models\task_data\Req3TasksDataItems;
 use app\modules\process\models\template_steps\Req3TemplateSteps;
+use app\modules\process\models\Req3FunctionBase;
+use app\modules\process\models\task_opers\Req3TaskOperOnline;
 use DateTimeImmutable;
 use Yii;
 use yii\db\Exception;
@@ -107,7 +109,299 @@ class ProcessTaskArchiveService
 
     protected function collectTaskData(Req3Tasks $task): array
     {
-        return [];
+        $items = [];
+
+        $before_full_info_transitions = false;
+
+        foreach ($task->step_history as $history) {
+            if (!$before_full_info_transitions) {
+                $items[] = $this->buildTransitionItem($history);
+            }
+            $before_full_info_transitions = false;
+
+            $data = $history->getDataArray();
+
+            $items[] = $this->buildStepItem($task, $history, $data);
+
+            $stepItems = array_merge(
+                $this->buildTransitionDetailItems($history, $data, $before_full_info_transitions),
+                $this->buildInfoItems($data),
+                $this->buildLinkItems($data),
+                $this->buildFunctionItems($history, $data, $before_full_info_transitions),
+                $this->buildDataChangeItems($history, $data)
+            );
+
+            usort($stepItems, function ($a, $b) {
+                if ($a['time'] != $b['time']) {
+                    return $a['time'] <=> $b['time'];
+                }
+                if ($a['priority'] != $b['priority']) {
+                    return $a['priority'] <=> $b['priority'];
+                }
+                if (isset($a['n']) && isset($b['n'])) {
+                    return $a['n'] <=> $b['n'];
+                }
+                return 0;
+            });
+
+            foreach ($stepItems as $itemStep) {
+                $items[] = $itemStep;
+            }
+        }
+
+        return $items;
+    }
+
+    protected function buildTransitionItem($history): array
+    {
+        return [
+            'time'     => strtotime($history->start_date),
+            'type'     => 'transition',
+            'priority' => 4,
+            'item'     => [
+                'start_date'     => $history->start_date,
+                'oper_id'        => $history->oper_id,
+                'from_task_id'   => $history->from_task_id,
+                'from_task_name' => $history->from_task ? $history->from_task->name : null,
+            ],
+        ];
+    }
+
+    protected function buildStepItem(Req3Tasks $task, $history, array $data): array
+    {
+        $labelObj = empty($history->end_date) ? ($task->queue_label ?? null) : ($history->queue_label ?? null);
+        $step = $history->step;
+        $stepData = [
+            'start_date' => $history->start_date,
+            'end_date'   => $history->end_date,
+            'step_id'    => $history->step_id,
+            'step_name'  => $step ? $step->name : null,
+            'step_is_first' => $step ? (bool)$step->is_first : false,
+            'step_is_auto'  => $step ? (bool)$step->is_auto : false,
+            'step_is_calls' => $step ? (bool)$step->is_calls : false,
+            'step_is_last'  => $step ? (bool)$step->is_last : false,
+            'step_is_deviation' => $step ? (bool)$step->isDeviation() : false,
+            'escalation' => $history->escalation,
+            'is_overdue' => (bool)$history->is_overdue,
+            'is_deviation_job_complete' => $history->isDeviationJobComplete(),
+        ];
+        if ($labelObj) {
+            $stepData['label'] = [
+                'label' => $labelObj->label,
+                'color' => $labelObj->color,
+            ];
+        }
+
+        $stepItem = [
+            'time'     => strtotime($history->start_date),
+            'type'     => 'step',
+            'priority' => 5,
+            'item'     => $stepData,
+            'online'   => [],
+        ];
+
+        if (empty($history->end_date)) {
+            $data['online'] = Req3TaskOperOnline::find()
+                ->select(new Expression("SUM(online_seconds) seconds"))
+                ->andWhere(['task_id' => $task->id, 'step_id' => $task->step_id])
+                ->groupBy(['oper_id'])
+                ->indexBy('oper_id')
+                ->column();
+        }
+
+        if (isset($data['online'])) {
+            foreach ($data['online'] as $oper_id => $seconds) {
+                if (is_array($seconds)) {
+                    $oper_id = $seconds['oper_id'];
+                    $seconds = $seconds['seconds'];
+                }
+                if (!isset($stepItem['online'][$oper_id])) {
+                    $stepItem['online'][$oper_id] = 0;
+                }
+                $stepItem['online'][$oper_id] += $seconds;
+            }
+        }
+
+        return $stepItem;
+    }
+
+    protected function buildTransitionDetailItems($history, array $data, bool &$before_full_info_transitions): array
+    {
+        $items = [];
+
+        if (isset($data['transitions'])) {
+            foreach ($data['transitions'] as $transition) {
+                if (!isset($transition['time_start'])) {
+                    continue;
+                }
+
+                if (array_key_exists('rule2_id', $transition)) {
+                    $itemTransition = [
+                        'time_start' => $transition['time_start'],
+                        'oper_id'    => $transition['oper_id'] ?? null,
+                        'rule2_id'   => $transition['rule2_id'],
+                        'from_step_id' => $history->step_id,
+                    ];
+                    if (isset($transition['triggeredRuleIds'])) {
+                        $itemTransition['triggeredRuleIds'] = $transition['triggeredRuleIds'];
+                    }
+                    if (isset($transition['ok'])) {
+                        $itemTransition['ok'] = $transition['ok'];
+                    }
+                    $items[] = [
+                        'time'     => $transition['time_start'],
+                        'type'     => 'rule2_detail',
+                        'priority' => 4,
+                        'item'     => $itemTransition,
+                    ];
+                } else {
+                    $itemTransition = [
+                        'time_start' => $transition['time_start'],
+                        'oper_id'    => $transition['oper_id'] ?? null,
+                    ];
+                    if (isset($transition['transition']['name'])) {
+                        $itemTransition['transition'] = ['name' => $transition['transition']['name']];
+                    }
+                    if (isset($transition['ok'])) {
+                        $itemTransition['ok'] = $transition['ok'];
+                    }
+                    $items[] = [
+                        'time'     => $transition['time_start'],
+                        'type'     => 'transition_detail',
+                        'priority' => 4,
+                        'item'     => $itemTransition,
+                    ];
+                }
+
+                $before_full_info_transitions = true;
+            }
+        }
+
+        return $items;
+    }
+
+    protected function buildInfoItems(array $data): array
+    {
+        $items = [];
+
+        if (isset($data['info'])) {
+            foreach ($data['info'] as $info) {
+                $items[] = [
+                    'time'     => $info['time_start'],
+                    'type'     => 'info',
+                    'priority' => 0,
+                    'item'     => [
+                        'time_start' => $info['time_start'],
+                        'message'    => $info['message'] ?? '',
+                    ],
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    protected function buildLinkItems(array $data): array
+    {
+        $items = [];
+
+        if (isset($data['link'])) {
+            foreach ($data['link'] as $link) {
+                $linkItem = [
+                    'time_start' => $link['time_start'],
+                    'type'       => $link['type'] ?? 'link',
+                    'oper_id'    => $link['oper_id'] ?? null,
+                ];
+                if (isset($link['child_id'])) {
+                    $linkItem['child_id'] = $link['child_id'];
+                }
+                if (isset($link['parent_id'])) {
+                    $linkItem['parent_id'] = $link['parent_id'];
+                }
+                $items[] = [
+                    'time'     => $link['time_start'],
+                    'type'     => 'link',
+                    'priority' => 0,
+                    'item'     => $linkItem,
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    protected function buildFunctionItems($history, array $data, bool &$before_full_info_transitions): array
+    {
+        $items = [];
+
+        if (isset($data['functions'])) {
+            foreach ($data['functions'] as $i => $function) {
+                $functionData = [
+                    'time_start' => $function['time_start'],
+                    'type'       => $function['type'] ?? Req3FunctionBase::TYPE_NEXT_STEP,
+                ];
+                if (isset($function['name'])) {
+                    $functionData['name'] = $function['name'];
+                }
+                if (isset($function['oper_id'])) {
+                    $functionData['oper_id'] = $function['oper_id'];
+                }
+                if (isset($function['btn_name'])) {
+                    $functionData['btn_name'] = $function['btn_name'];
+                }
+                if (!empty($function['data'])) {
+                    $functionData['data'] = $function['data'];
+                }
+                if (!empty($function['errors'])) {
+                    $functionData['errors'] = $function['errors'];
+                }
+
+                $functionItem = [
+                    'time'     => $function['time_start'],
+                    'type'     => 'function',
+                    'priority' => 2,
+                    'n'        => $i,
+                    'item'     => $functionData,
+                ];
+
+                if (!$before_full_info_transitions) {
+                    if (($functionData['type'] ?? Req3FunctionBase::TYPE_NEXT_STEP) == Req3FunctionBase::TYPE_NEXT_STEP && $history->end_date != null) {
+                        $functionItem['time'] = strtotime($history->end_date);
+                    }
+                }
+
+                $items[] = $functionItem;
+            }
+        }
+
+        return $items;
+    }
+
+    protected function buildDataChangeItems($history, array $data): array
+    {
+        $items = [];
+
+        if (isset($data['data_change'])) {
+            foreach ($data['data_change'] as $dataItem) {
+                $time = $dataItem['time'] ?? strtotime($history->start_date);
+                $itemData = [
+                    'time'  => $time,
+                    'name'  => $dataItem['name'] ?? '',
+                    'value' => $dataItem['value'] ?? [],
+                ];
+                if (isset($dataItem['oper_id'])) {
+                    $itemData['oper_id'] = $dataItem['oper_id'];
+                }
+                $items[] = [
+                    'time'     => $time,
+                    'type'     => 'data',
+                    'priority' => 3,
+                    'item'     => $itemData,
+                ];
+            }
+        }
+
+        return $items;
     }
 
     public function archiveAvailableTasks(): void
