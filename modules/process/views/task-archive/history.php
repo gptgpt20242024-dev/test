@@ -40,7 +40,7 @@
             <?php endif; ?>
 
             <?php if ($item['type'] === 'data'): ?>
-                <?= $this->render('history/data_changed', ['item' => $item['item'], 'show_id' => null]); ?>
+                <?= $this->render('history/data_changed', ['item' => $item['item']]); ?>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>

@@ -6,11 +6,10 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $item array */
-/* @var $show_id int */
 
 ?>
 
-<div style="margin-left: 60px; font-size: small; color: #9b9b9b; <?= $show_id != null ? "display:none;" : "" ?>" data-spoiler-content="<?= $show_id ?>">
+<div style="margin-left: 60px; font-size: small; color: #9b9b9b;">
 
     <?php if ($item['time'] ?? false): ?>
         <div><i class="fas fa-clock"></i> <?= (new Date($item['time']))->format(Date::FORMAT_DATE_TIME) ?>

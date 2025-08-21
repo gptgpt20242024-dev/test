@@ -21,7 +21,7 @@ $date = new Date($item['time_start']);
         <div>
             <i class="fas fa-mouse" style="padding: 0 2px"></i>
             Двинул задачу далее по маршруту #<?= $item['rule2_id'] ?>
-            <a href="#" onclick="showDialogStepRulesInfo(<?= $item['from_step_id'] ?>, <?= $task->id ?>, <?= $item['rule2_id'] ?>, <?= json_encode($item['triggeredRuleIds'] ?? []) ?>)">
+            <a href="javascript:void (0);" onclick="showDialogStepRulesInfo(<?= $item['from_step_id'] ?>, null, <?= $item['rule2_id'] ?>, <?= json_encode($item['triggeredRuleIds'] ?? []) ?>)">
                 (инфо)
             </a>
         </div>

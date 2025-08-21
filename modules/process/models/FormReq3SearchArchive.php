@@ -17,21 +17,22 @@ class FormReq3SearchArchive extends Model
         return [
             [['template_id'], 'integer'],
             [['template_name', 'dateRange'], 'safe'],
-            [['dateRange'], 'required'],
             ['dateRange', 'validateDateRange'],
         ];
     }
 
     public function validateDateRange($attribute)
     {
-        $arr = explode(' - ', (string)$this->dateRange);
-        if (count($arr) !== 2) {
-            $this->addError($attribute, 'Неверный диапазон дат.');
-            return;
-        }
-        [$from, $to] = $arr;
-        if (strtotime($from) === false || strtotime($to) === false || strtotime($from) > strtotime($to)) {
-            $this->addError($attribute, 'Начальная дата больше конечной.');
+        if (!empty($this->dateRange)) {
+            $arr = explode(' - ', (string)$this->dateRange);
+            if (count($arr) !== 2) {
+                $this->addError($attribute, 'Неверный диапазон дат.');
+                return;
+            }
+            [$from, $to] = $arr;
+            if (strtotime($from) === false || strtotime($to) === false || strtotime($from) > strtotime($to)) {
+                $this->addError($attribute, 'Начальная дата больше конечной.');
+            }
         }
     }
 

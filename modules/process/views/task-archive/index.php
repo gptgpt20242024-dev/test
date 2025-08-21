@@ -1,8 +1,9 @@
 <?php
+
+use app\modules\process\widgets\Select2Template;
+use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\widgets\ActiveForm;
-use app\widgets\Select2Template;
 use app\widgets\DateRangePickerWithRanges;
 
 /* @var $this yii\web\View */

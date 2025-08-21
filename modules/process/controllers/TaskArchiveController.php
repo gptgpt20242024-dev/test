@@ -2,13 +2,14 @@
 
 namespace app\modules\process\controllers;
 
+use app\controllers\BaseController;
 use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\FormReq3SearchArchive;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use Yii;
 
-class TaskArchiveController extends Controller
+class TaskArchiveController extends BaseController
 {
     public function actionIndex()
     {
