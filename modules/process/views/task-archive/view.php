@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\process\models\template_steps\Req3TemplateSteps;
+use app\modules\process\widgets\IdentifierViewWidget;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -9,6 +10,8 @@ use yii\helpers\Html;
 /* @var $timeExecute array|null */
 /* @var $deviationInfo array */
 /* @var $timeTemplate int|null */
+/* @var $identifiers app\modules\process\models\identifiers\Req3Identifiers[] */
+/* @var $dataItems app\modules\process\models\task_data\Req3TasksDataItems[][] */
 
 $this->title = "Архив: ".$task->task_name;
 $this->params['breadcrumbs'][] = ['label' => "Архив", 'url' => ['index']];
@@ -34,6 +37,22 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
             <p class="mb-0"><strong>Дата добавления в архив:</strong> <?= $task->date_add_to_archive ?></p>
         </div>
     </div>
+
+    <?php if (!empty($identifiers)): ?>
+        <div class="card mb-3">
+            <div class="card-header">Данные</div>
+            <div class="card-body">
+                <?php foreach ($identifiers as $identifierId => $identifier): ?>
+                    <?= IdentifierViewWidget::widget([
+                        'identification' => Yii::$app->user->identity,
+                        'identifier' => $identifier,
+                        'forced_data' => $dataItems[$identifierId] ?? [],
+                        'is_only_view' => true,
+                    ]) ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div data-history-card="1" class="card">
         <div class="card-header" data-spoiler data-container="[data-history-card]" data-content="[data-history-content]">

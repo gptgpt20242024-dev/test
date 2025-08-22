@@ -65,8 +65,8 @@ class IdentifierViewWidget extends Widget
 
         $oper = Opers::getOperByData($this->identification);
 
-        $can_edit = $this->task && $oper && $this->task->isAccessAction($oper);
-        $canLike = ($this->task && $oper && $this->task->isAccessView($oper)) || ($oper && Yii::$app->authManager->checkAccess($oper->oper_id, "business.like"));
+        $can_edit = !$this->is_only_view && $this->task && $oper && $this->task->isAccessAction($oper);
+        $canLike = !$this->is_only_view && (($this->task && $oper && $this->task->isAccessView($oper)) || ($oper && Yii::$app->authManager->checkAccess($oper->oper_id, "business.like")));
 
         $setting = $this->identifier->getSettingArray();
         $setting_limit_days = null;
@@ -164,7 +164,7 @@ class IdentifierViewWidget extends Widget
         if ($this->identifier->type == Req3Identifiers::TYPE_REWARDS) {
             $values = count($values) > 0 ? $values : [new Req3TasksDataItems(['type' => Req3Identifiers::TYPE_REWARDS, 'identifier_id' => $this->identifier->id])];
         }
-        if ($this->identifier->type == Req3Identifiers::TYPE_CALL_STATUS && count($this->task->calls_statuses ?? []) > 0) {
+        if ($this->task && $this->identifier->type == Req3Identifiers::TYPE_CALL_STATUS && count($this->task->calls_statuses ?? []) > 0) {
             $values = [new Req3TasksDataItems(['type' => Req3Identifiers::TYPE_CALL_STATUS, 'identifier_id' => $this->identifier->id])];
         }
         if ($this->identifier->type == Req3Identifiers::TYPE_GHOST) {
@@ -174,8 +174,8 @@ class IdentifierViewWidget extends Widget
         //-------------------------------------------
 
         $is_has_history = false;
-        if ($this->forced_data === null) {
-            foreach ($this->task->data_history ?? [] as $value) {
+        if ($this->forced_data === null && $this->task) {
+            foreach ($this->task->data_history as $value) {
                 if ($value->identifier_id == $this->identifier->id && $value->type == $this->identifier->type) {
                     $is_has_history = true;
                     break;

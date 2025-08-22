@@ -159,11 +159,25 @@ class ProcessTaskArchiveService
         $deviationInfo = $task->getDeviationInfo();
         $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
 
+        $dataItems = [];
+        foreach ($task->data as $item) {
+            $dataItems[] = [
+                'id'            => $item->id,
+                'identifier_id' => $item->identifier_id,
+                'type'          => $item->type,
+                'value_id'      => $item->value_id,
+                'value_text'    => $item->value_text,
+                'value_number'  => $item->value_number,
+                'oper_id'       => $item->oper_id,
+            ];
+        }
+
         return [
-            'history'          => $items,
+            'history'        => $items,
             'time_execute'   => $timeExecute,
             'deviation_info' => $deviationInfo,
             'time_template'  => $timeTemplate,
+            'data_items'     => $dataItems,
         ];
 
     }
