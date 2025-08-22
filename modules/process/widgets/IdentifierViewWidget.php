@@ -81,7 +81,7 @@ class IdentifierViewWidget extends Widget
             $setting_ignore_items = count($setting_ignore_items) > 0 ? ListsItems::find()->id($setting_ignore_items)->select('value')->column() : [];
         }
 
-        $is_multi = $this->identifier->is_multi;
+        $is_multi = $this->identifier->is_multi==1;
         $is_required = $this->task && $this->identifier->isRequired($this->task, $this->ruleData);
         $is_editable = $is_required || ($this->task && $this->identifier->isEditable($this->task, $this->ruleData));
         $is_deviation = $this->task && $this->identifier->isDeviationBlock($this->task, $this->ruleData, $this->taskData);

@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\process\models\template_steps\Req3TemplateSteps;
+use app\modules\process\widgets\IdentifierViewWidget;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -9,6 +10,9 @@ use yii\helpers\Html;
 /* @var $timeExecute array|null */
 /* @var $deviationInfo array */
 /* @var $timeTemplate int|null */
+/* @var $identifierIds int[] */
+/* @var $identifiers app\modules\process\models\identifiers\Req3Identifiers[] */
+/* @var $dataItems app\modules\process\models\task_data\Req3TasksDataItems[][] */
 
 $this->title = "Архив: ".$task->task_name;
 $this->params['breadcrumbs'][] = ['label' => "Архив", 'url' => ['index']];
@@ -35,11 +39,11 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
         </div>
     </div>
 
-    <div data-history-card="1" class="card">
+    <div class="card" data-history-card="1">
         <div class="card-header" data-spoiler data-container="[data-history-card]" data-content="[data-history-content]">
-            История
             <i class="fas fa-caret-up" data-open="1"></i>
             <i class="fas fa-caret-down" data-close="1"></i>
+            История
         </div>
         <div class="card-body" data-history-content="1" style="display: none; background: #dedede">
             <?= $this->render('history', [
@@ -51,4 +55,23 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
             ]) ?>
         </div>
     </div>
+
+
+    <?php if (!empty($identifiers)): ?>
+        <div class="card" data-data-card="1">
+            <div class="card-header" data-spoiler data-container="[data-data-card]" data-content="[data-data-content]">
+                <i class="fas fa-caret-up" data-open="1"></i>
+                <i class="fas fa-caret-down" data-close="1"></i>
+                Данные
+            </div>
+            <div class="card-body" data-data-content="1"  style="display: none; background: #dedede">
+                <?= $this->render('data', [
+                    'identifierIds' => $identifierIds,
+                    'identifiers' => $identifiers,
+                    'dataItems' => $dataItems,
+                ]) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
 </div>

@@ -3,8 +3,11 @@
 namespace app\modules\process\controllers;
 
 use app\controllers\BaseController;
+use app\modules\process\factories\ArchiveDataDtoFactory;
 use app\modules\process\models\FormReq3SearchArchive;
+use app\modules\process\models\identifiers\Req3Identifiers;
 use app\modules\process\models\task_archive\TaskArchive;
+use app\modules\process\models\task_data\Req3TasksDataItems;
 use Yii;
 use yii\data\Pagination;
 use yii\web\NotFoundHttpException;
@@ -45,6 +48,9 @@ class TaskArchiveController extends BaseController
         $timeExecute = null;
         $deviationInfo = [];
         $timeTemplate = null;
+        $dataItems = [];
+        $identifiers = [];
+        $identifierIds = [];
 
         if (!empty($model->data_json)) {
             $data = json_decode($model->data_json, true) ?: [];
@@ -52,6 +58,19 @@ class TaskArchiveController extends BaseController
             $timeExecute = $data['time_execute'] ?? null;
             $deviationInfo = $data['deviation_info'] ?? [];
             $timeTemplate = $data['time_template'] ?? null;
+
+            if (!empty($data['data_items']) && is_array($data['data_items'])) {
+                foreach ($data['data_items'] as $row) {
+                    $item = ArchiveDataDtoFactory::createDataItem($row);
+                    $dataItems[$item->identifier_id][] = $item;
+                    $identifierIds[$item->identifier_id] = $item->identifier_id;
+                }
+                if (!empty($identifierIds)) {
+                    $identifiers = Req3Identifiers::find()->where(['id' => array_keys($identifierIds)])->indexBy('id')->all();
+                }
+            }
+
+
         }
 
         return $this->render('view', [
@@ -60,6 +79,9 @@ class TaskArchiveController extends BaseController
             'timeExecute' => $timeExecute,
             'deviationInfo' => $deviationInfo,
             'timeTemplate' => $timeTemplate,
+            'dataItems' => $dataItems,
+            'identifierIds' => $identifierIds,
+            'identifiers' => $identifiers,
         ]);
     }
 }

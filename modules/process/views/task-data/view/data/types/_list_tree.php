@@ -28,7 +28,15 @@ RippleCheckboxAsset::register($this);
 $items = [];
 /** @var ListsTreeItems[] $parents */
 $parents = [];
+
+$listTreeGroup = $identifier->list_tree_group;
+
+
 if (!empty($value->value_id) && $value->list_tree_item) {
+    if (!$listTreeGroup){
+        $listTreeGroup=$value->list_tree_item->group;
+    }
+
     $parent = $value->list_tree_item;
     while ($parent != null) {
         $parents[] = $parent;
@@ -37,7 +45,7 @@ if (!empty($value->value_id) && $value->list_tree_item) {
 
     $items = $value->list_tree_item->getChildren()->andWhere(['OR', ['is_approved' => 1], ['is_approved' => 0, 'oper_added' => Yii::$app->user->id]])->all();
 } else {
-    $items = $identifier->list_tree_group ? $identifier->list_tree_group->getItems_main()->andWhere(['OR', ['is_approved' => 1], ['is_approved' => 0, 'oper_added' => Yii::$app->user->id]])->all() : [];
+    $items = $listTreeGroup ? $listTreeGroup->getItems_main()->andWhere(['OR', ['is_approved' => 1], ['is_approved' => 0, 'oper_added' => Yii::$app->user->id]])->all() : [];
 }
 
 $items = ListsTreeItems::sortItems($items);
@@ -53,14 +61,14 @@ $parents = array_reverse($parents);
 </style>
 
 
-<?php if ($identifier->list_tree_group): ?>
+<?php if ($listTreeGroup): ?>
     <?php ActiveForm::begin(['options' => ['id' => "form_{$identifier->id}"]]) ?>
 
     <?php if ($is_editable && !$is_only_view && $can_edit): ?>
 
         <?php
         $placeholder = "Введите для поиска";
-        if ($identifier->list_tree_group->is_complemented) {
+        if ($listTreeGroup->is_complemented) {
             $placeholder .= " или добавления недостающего пункта";
         }
         ?>
@@ -86,7 +94,7 @@ $parents = array_reverse($parents);
                             url: generateUrl('/process/task-data/ajax-find-list-tree', {
                                 'task_id': <?=$task->id?>,
                                 'identifier_id': <?=$identifier->id?>,
-                                'group_id': <?=$identifier->list_tree_group->id?>,
+                                'group_id': <?=$listTreeGroup->id?>,
                                 'text': search,
                             }),
                             container: $container_search,
@@ -128,7 +136,7 @@ $parents = array_reverse($parents);
                                 <i class="fas fa-lightbulb mr-1" style="color: <?= $parent->color ?>; text-shadow: 0 0 5px black;"></i>
                             <?php endif; ?>
 
-                            <?php if ($identifier->list_tree_group->is_hide_number): ?>
+                            <?php if ($listTreeGroup->is_hide_number): ?>
                                 <?php $number = $parent->getNumber(); ?>
                                 <?php if ($number !== null): ?>
                                     <i class="fas fa-info-circle" title="<?= $number ?>" data-toggle="tooltip" style="color: #cdcdcd"></i>
@@ -191,7 +199,7 @@ $parents = array_reverse($parents);
                                 <i class="fas fa-lightbulb mr-1" style="color: <?= $item->color ?>; text-shadow: 0 0 5px black;"></i>
                             <?php endif; ?>
 
-                            <?php if ($identifier->list_tree_group->is_hide_number): ?>
+                            <?php if ($listTreeGroup->is_hide_number): ?>
                                 <?php $number = $item->getNumber(); ?>
                                 <?php if ($number !== null): ?>
                                     <i class="fas fa-info-circle" title="<?= $number ?>" data-toggle="tooltip" style="color: #cdcdcd"></i>

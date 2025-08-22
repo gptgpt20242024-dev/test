@@ -134,7 +134,7 @@ if (($value->counterparty->link_type ?? null) == Counterparties::LINK_TYPE_ORGAN
             <?php if ($detail->type == Req3IdentifierDetails::TYPE_COUNTERPARTY_COMMUNICATIONS): ?>
                 <?= WidgetCounterpartyCommunications::widget([
                     'counterpartyId' => $value->value_id,
-                    'params'         => ['fmId' => $task->fm_id],
+                    'params'         => ['fmId' => $task->fm_id??null],
                 ]) ?>
             <?php endif; ?>
             <?php //==============================================================?>

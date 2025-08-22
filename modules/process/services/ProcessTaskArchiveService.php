@@ -2,6 +2,7 @@
 
 namespace app\modules\process\services;
 
+use app\modules\process\factories\ArchiveDataDtoFactory;
 use app\modules\process\models\Req3FunctionBase;
 use app\modules\process\models\task\Req3Tasks;
 use app\modules\process\models\task\Req3TasksStepHistory;
@@ -159,11 +160,17 @@ class ProcessTaskArchiveService
         $deviationInfo = $task->getDeviationInfo();
         $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
 
+        $dataItems = [];
+        foreach ($task->data as $item) {
+            $dataItems[] = ArchiveDataDtoFactory::serializeDataItem($item);
+        }
+
         return [
             'history'          => $items,
             'time_execute'   => $timeExecute,
             'deviation_info' => $deviationInfo,
             'time_template'  => $timeTemplate,
+            'data_items'     => $dataItems,
         ];
 
     }
