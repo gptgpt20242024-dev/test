@@ -3,6 +3,8 @@
 namespace app\modules\process2;
 
 use app\modules\process\assets\ProcessAsset;
+use app\modules\process2\components\identifier\BaseIdentifier;
+use app\modules\process2\services\data\BasicIdentifierMapValidator;
 use app\modules\process2\services\data\DataItemIdentifierRegistry;
 use app\modules\process2\services\data\IdentifierMapProvider;
 use app\modules\process2\services\data\IdentifierPresetRegistry;
@@ -14,6 +16,14 @@ use yii\web\Application as WebApplication;
 
 class ProcessModule extends Module implements BootstrapInterface
 {
+    public const PRESET_NAME = 'process2/base';
+
+    /** @var string[]|'*' names of presets to include when building final map */
+    public string|array $identifierIncludes = '*';
+
+    /** @var array<int, class-string<BaseIdentifier>> final overrides */
+    public array $identifierOverrides = [];
+
     public function init()
     {
         parent::init();
@@ -36,19 +46,32 @@ class ProcessModule extends Module implements BootstrapInterface
             $c->setSingleton(DataItemIdentifierRegistry::class, DataItemIdentifierRegistry::class);
         }
 
-        $baseMap = (require __DIR__ . '/config/identifiers.php')['identifiers'] ?? [];
-        $c->get(IdentifierPresetRegistry::class)->add('process2/base', $baseMap);
+        // Publish module preset
+        $c->get(IdentifierPresetRegistry::class)->add(self::PRESET_NAME, $this->loadPreset());
 
-        if (!$c->has(IdentifierMapProvider::class, true)) {
-            $includes = $app->params['process.identifiers.includes'] ?? '*';
-            $overrides = $app->params['process.identifiers.map'] ?? [];
-            $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
-                return new LazyFinalMapProvider(
-                    $c->get(IdentifierPresetRegistry::class),
-                    $includes,
-                    $overrides
-                );
-            });
+        // Respect existing provider bound by application
+        if ($c->has(IdentifierMapProvider::class, true)) {
+            return;
         }
+
+        $includes  = $this->identifierIncludes;
+        $overrides = $this->identifierOverrides;
+
+        $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
+            return new LazyFinalMapProvider(
+                $c->get(IdentifierPresetRegistry::class),
+                $includes,
+                $overrides,
+                new BasicIdentifierMapValidator(BaseIdentifier::class)
+            );
+        });
+    }
+
+    /**
+     * @return array<int, class-string<BaseIdentifier>>
+     */
+    private function loadPreset(): array
+    {
+        return (require __DIR__ . '/config/identifiers.php')['identifiers'] ?? [];
     }
 }
