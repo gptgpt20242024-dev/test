@@ -1,9 +1,22 @@
 <?php
+
+use app\modules\communication\services\CommunicationService;
+use app\modules\communication\services\LinkServiceInterface;
+use app\modules\counterparties\services\CounterpartyService;
 use yii\helpers\ArrayHelper;
 
-return ArrayHelper::merge(
-    require __DIR__ . '/di.php',
-    [
-        // other console application configuration can be added here
-    ]
-);
+$config = [
+    'id'       => 'basic-console',
+    'basePath' => dirname(__DIR__),
+
+    'bootstrap' => [],
+
+    'modules'             => [],
+    'controllerNamespace' => 'app\commands',
+    'components'          => [
+            'cache'       => ['class' => 'yii\caching\FileCache'],
+        ],
+    'params'              => [],
+];
+
+return $config;

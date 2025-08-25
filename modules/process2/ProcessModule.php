@@ -18,7 +18,6 @@ class ProcessModule extends Module implements BootstrapInterface
     {
         parent::init();
         Yii::configure($this, require(__DIR__ . '/config/web.php'));
-        Yii::configure(Yii::$container, require(__DIR__ . '/config/di.php'));
 
         if (Yii::$app instanceof WebApplication) {
             ProcessAsset::register(Yii::$app->view);
@@ -33,26 +32,23 @@ class ProcessModule extends Module implements BootstrapInterface
             $c->setSingleton(IdentifierPresetRegistry::class, IdentifierPresetRegistry::class);
         }
 
+        if (!$c->has(DataItemIdentifierRegistry::class, true)) {
+            $c->setSingleton(DataItemIdentifierRegistry::class, DataItemIdentifierRegistry::class);
+        }
+
         $baseMap = (require __DIR__ . '/config/identifiers.php')['identifiers'] ?? [];
         $c->get(IdentifierPresetRegistry::class)->add('process2/base', $baseMap);
 
-        if ($c->has(IdentifierMapProvider::class, true)) {
-            return;
-        }
-
-        $includes = $app->params['process.identifiers.includes'] ?? '*';
-        $overrides = $app->params['process.identifiers.map'] ?? [];
-
-        $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
-            return new LazyFinalMapProvider(
-                $c->get(IdentifierPresetRegistry::class),
-                $includes,
-                $overrides
-            );
-        });
-
-        if (!$c->has(DataItemIdentifierRegistry::class, true)) {
-            $c->setSingleton(DataItemIdentifierRegistry::class, DataItemIdentifierRegistry::class);
+        if (!$c->has(IdentifierMapProvider::class, true)) {
+            $includes = $app->params['process.identifiers.includes'] ?? '*';
+            $overrides = $app->params['process.identifiers.map'] ?? [];
+            $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
+                return new LazyFinalMapProvider(
+                    $c->get(IdentifierPresetRegistry::class),
+                    $includes,
+                    $overrides
+                );
+            });
         }
     }
 }
