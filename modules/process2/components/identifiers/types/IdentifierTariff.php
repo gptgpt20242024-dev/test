@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\components\identifiers\type;
+namespace app\modules\process2\components\identifiers\types;
 
 use app\modules\process\widgets\identifier\{TariffInputWidget, TariffViewWidget};
 use app\modules\process2\components\identifiers\BaseIdentifier;

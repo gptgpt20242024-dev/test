@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\components\identifiers\type;
+namespace app\modules\process2\components\identifiers\types;
 
 use app\modules\process2\components\identifiers\BaseIdentifier;
 use app\modules\process2\dto\data\type\DataItemUserDto;
