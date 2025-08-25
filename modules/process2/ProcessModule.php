@@ -16,10 +16,10 @@ class ProcessModule extends Module implements BootstrapInterface
 {
     public const PRESET_NAME = 'process2/base';
 
-    /** @var string[]|'*' names of presets to include when building final map */
-    public string|array $identifierIncludes = '*';
+    /** @var string[] names of presets to include when building final map */
+    public array $identifierPresetIncludes = ['*'];
 
-    /** @var array<int, class-string<BaseIdentifier>> final overrides */
+    /** @var array<class-string<BaseIdentifier>, int> final overrides */
     public array $identifierOverrides = [];
 
     public function init()
@@ -43,7 +43,7 @@ class ProcessModule extends Module implements BootstrapInterface
         }
 
         if (!$c->has(IdentifierMapProvider::class, true)) {
-            $includes = $this->identifierIncludes;
+            $includes = $this->identifierPresetIncludes;
             $overrides = $this->identifierOverrides;
 
             $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process\controllers;
+namespace app\modules\process2\controllers;
 
 use app\controllers\BaseController;
 use app\modules\process\models\task_data\Req3TasksDataItems;
@@ -8,8 +8,9 @@ use app\modules\process\widgets\identifier\IdentifierViewTypeWidget;
 use app\modules\process2\factories\data\{DataItemDtoFactory};
 use app\modules\process2\services\data\loader\DataItemBatchLoader;
 use Yii;
+use yii\web\Controller;
 
-class TaskDataTestController extends BaseController
+class TaskDataTestController extends Controller
 {
     public function actionTest($taskId)
     {
@@ -19,14 +20,14 @@ class TaskDataTestController extends BaseController
 
         /** @var DataItemDtoFactory $factory */
         $factory = Yii::$container->get(DataItemDtoFactory::class);
-        /** @var DataItemBatchLoader $batchLoader */
-        $batchLoader = Yii::$container->get(DataItemBatchLoader::class);
 
         $dtos = [];
         foreach ($models as $model) {
             $dtos[] = $factory->create($model);
         }
 
+        /** @var DataItemBatchLoader $batchLoader */
+        $batchLoader = Yii::$container->get(DataItemBatchLoader::class);
         $batchLoader->load($dtos);
 
         $views = [];

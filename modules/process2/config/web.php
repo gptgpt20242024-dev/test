@@ -3,8 +3,6 @@
 use yii\helpers\ArrayHelper;
 
 $config = [
-    'identifierIncludes'  => '*',
-    'identifierOverrides' => [],
     'params'              => [],
 ];
 

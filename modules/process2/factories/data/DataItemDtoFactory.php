@@ -8,19 +8,23 @@ use app\modules\process2\services\data\DataItemIdentifierRegistry;
 
 final class DataItemDtoFactory
 {
-    public function __construct(private DataItemIdentifierRegistry $registry)
+    private DataItemIdentifierRegistry $registry;
+
+    public function __construct(DataItemIdentifierRegistry $registry)
     {
+        $this->registry = $registry;
     }
 
     public function create(Req3TasksDataItems $model): DataItemDto
     {
-        $class = $this->registry->getDtoClass((int)$model->type);
+        /** @var class-string<DataItemDto> $class */
+        $class = $this->registry->getDtoClass($model->type);
         return new $class(
-            id: (int)$model->id,
-            type: (int)$model->type,
-            identifierId: (int)$model->identifier_id,
-            valueId: $model->value_id ? (int)$model->value_id : null,
-            valueText: $model->value_text,
+             $model->id,
+            $model->type,
+            $model->identifier_id,
+             $model->value_id ? $model->value_id : null,
+             $model->value_text,
         );
     }
 }

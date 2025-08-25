@@ -21,7 +21,7 @@ final class LazyFinalMapProvider implements IdentifierMapProvider
 
     /**
      * @param array<string>|string $includes Names of presets to include or '*' for all
-     * @param array<int, class-string<BaseIdentifier>> $overrides Final overrides from application config
+     * @param array<class-string<BaseIdentifier>, int> $overrides Final overrides from application config
      */
     public function __construct(
         IdentifierPresetRegistry $registry,
@@ -41,38 +41,48 @@ final class LazyFinalMapProvider implements IdentifierMapProvider
             return $this->map;
         }
 
-        $final  = [];
-        $seenBy = [];
+        $finalIdentifiersMap  = [];
+        $seenByPreset = [];
 
-        $names = $this->includes === '*'
-            ? array_keys($this->registry->all())
-            : (array) $this->includes;
-
-        foreach ($names as $name) {
-            $map = $this->registry->get($name);
-            if ($this->validator) {
-                $this->validator->validatePreset($name, $map);
-            }
-            foreach ($map as $id => $class) {
-                if (isset($final[$id])) {
-                    $prev = $seenBy[$id] ?? 'unknown';
-                    throw new IdentifierConfigException(
-                        "Duplicate identifier id {$id} between '{$prev}' and '{$name}'"
-                    );
-                }
-                $final[$id]  = $class;
-                $seenBy[$id] = $name;
-            }
+        $hasStar  = in_array('*', $this->includes);
+        if ($hasStar) {
+            $presetNames = array_keys($this->registry->all());
+        } else {
+            $presetNames = array_unique(array_filter($this->includes, fn($n) => $n !== '*'));
         }
 
-        foreach ($this->overrides as $id => $class) {
-            $final[$id]  = $class;
+        foreach ($presetNames as $presetName) {
+            $identifiersMap = $this->registry->get($presetName);
+            if (!$identifiersMap) {
+                throw new IdentifierConfigException("Неизвестный пресет $presetName.");
+            }
+
+            if ($this->validator) {
+                $this->validator->validatePreset($presetName, $identifiersMap);
+            }
+
+            foreach ($identifiersMap as $id => $class) {
+                if (isset($this->overrides[$class])) {
+                    $id = $this->overrides[$class];
+                }
+
+                if (isset($finalIdentifiersMap[$id])) {
+                    $prevPreset = $seenByPreset[$id] ?? 'unknown';
+                    throw new IdentifierConfigException(
+                        "Дубль номера идентификатора: {$id} в '{$prevPreset}' и '{$presetName}'."
+                    );
+                }
+                $finalIdentifiersMap[$id]  = $class;
+                $seenByPreset[$id] = $presetName;
+            }
+
         }
 
         if ($this->validator) {
-            $this->validator->validateFinal($final);
+            $this->validator->validateFinal($finalIdentifiersMap);
         }
 
-        return $this->map = $final;
+        return $this->map = $finalIdentifiersMap;
     }
+
 }

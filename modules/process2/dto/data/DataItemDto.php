@@ -4,12 +4,23 @@ namespace app\modules\process2\dto\data;
 
 class DataItemDto
 {
+    public int     $id;
+    public int     $type;
+    public int     $identifierId;
+    public ?int    $valueId   = null;
+    public ?string $valueText = null;
+
     public function __construct(
-        public int $id,
-        public int $type,
-        public int $identifierId,
-        public ?int $valueId = null,
-        public ?string $valueText = null,
+        int $id,
+        int $type,
+        int $identifierId,
+        ?int $valueId = null,
+        ?string $valueText = null,
     ) {
+        $this->valueText = $valueText;
+        $this->valueId = $valueId;
+        $this->identifierId = $identifierId;
+        $this->type = $type;
+        $this->id = $id;
     }
 }
