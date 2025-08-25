@@ -2,11 +2,11 @@
 
 namespace app\modules\process2\identifier\type;
 
-use app\modules\process2\data\widget\type\edit\TariffInputWidget;
-use app\modules\process2\data\widget\type\view\TariffViewWidget;
+use app\modules\process2\data\widgets\edit\types\TariffInputWidget;
+use app\modules\process2\data\widgets\view\types\TariffViewWidget;
 use app\modules\process2\identifier\BaseIdentifier;
 use app\modules\process2\data\dto\type\DataItemTariffDto;
-use app\modules\process2\data\service\loader\type\TariffDataItemLoader;
+use app\modules\process2\data\services\loader\type\TariffDataItemLoader;
 
 final class IdentifierTariff extends BaseIdentifier
 {

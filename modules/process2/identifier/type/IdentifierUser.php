@@ -4,7 +4,7 @@ namespace app\modules\process2\identifier\type;
 
 use app\modules\process2\identifier\BaseIdentifier;
 use app\modules\process2\data\dto\type\DataItemUserDto;
-use app\modules\process2\data\service\loader\type\UserDataItemLoader;
+use app\modules\process2\data\services\loader\type\UserDataItemLoader;
 
 final class IdentifierUser extends BaseIdentifier
 {

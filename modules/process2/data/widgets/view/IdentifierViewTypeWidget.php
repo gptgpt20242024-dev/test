@@ -1,8 +1,8 @@
 <?php
-namespace app\modules\process2\data\widget;
+namespace app\modules\process2\data\widgets\view;
 
 use app\modules\process2\data\dto\DataItemDto;
-use app\modules\process2\data\service\DataItemIdentifierRegistry;
+use app\modules\process2\data\services\DataItemIdentifierRegistry;
 use Yii;
 use yii\base\Widget;
 
