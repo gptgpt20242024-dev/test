@@ -4,19 +4,19 @@ namespace app\modules\process2\services\data;
 
 use app\modules\process2\components\identifier\BaseIdentifier;
 use app\modules\process2\dto\data\DataItemDto;
+use app\modules\process2\services\data\IdentifierMapProvider;
 use app\modules\process2\services\data\loader\DataItemLoaderInterface;
 use Yii;
+
 
 class DataItemIdentifierRegistry
 {
     /** @var array<int, class-string<BaseIdentifier>> */
     private array $map;
 
-    public function __construct()
+    public function __construct(IdentifierMapProvider $provider)
     {
-        /** @var array<int, class-string<BaseIdentifier>> $config */
-        $config = Yii::$app->params['identifiers'] ?? [];
-        $this->map = $config;
+        $this->map = $provider->getMap();
     }
 
     /** @var array<string, DataItemLoaderInterface> */
