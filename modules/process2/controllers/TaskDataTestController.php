@@ -4,9 +4,9 @@ namespace app\modules\process2\controllers;
 
 use app\controllers\BaseController;
 use app\modules\process\models\task_data\Req3TasksDataItems;
-use app\modules\process\widgets\identifier\IdentifierViewTypeWidget;
-use app\modules\process2\factories\data\{DataItemDtoFactory};
-use app\modules\process2\services\data\loader\DataItemBatchLoader;
+use app\modules\process2\data\widget\IdentifierViewTypeWidget;
+use app\modules\process2\data\factory\DataItemDtoFactory;
+use app\modules\process2\data\service\loader\DataItemBatchLoader;
 use Yii;
 use yii\web\Controller;
 

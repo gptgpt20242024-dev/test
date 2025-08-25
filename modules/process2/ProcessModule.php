@@ -2,12 +2,12 @@
 
 namespace app\modules\process2;
 
-use app\modules\process2\components\identifiers\BaseIdentifier;
-use app\modules\process2\components\identifiers\presets\IdentifierPresetRegistry;
-use app\modules\process2\components\identifiers\presets\map\IdentifierMapProvider;
-use app\modules\process2\components\identifiers\presets\map\LazyFinalMapProvider;
-use app\modules\process2\components\identifiers\validators\BasicIdentifierMapValidator;
-use app\modules\process2\services\data\DataItemIdentifierRegistry;
+use app\modules\process2\identifier\BaseIdentifier;
+use app\modules\process2\identifier\preset\IdentifierPresetRegistry;
+use app\modules\process2\identifier\preset\map\IdentifierMapProvider;
+use app\modules\process2\identifier\preset\map\LazyFinalMapProvider;
+use app\modules\process2\identifier\preset\validator\BasicIdentifierMapValidator;
+use app\modules\process2\data\service\DataItemIdentifierRegistry;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
