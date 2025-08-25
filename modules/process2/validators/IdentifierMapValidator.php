@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\services\data;
+namespace app\modules\process2\validators;
 
 /**
  * @template T of \app\modules\process2\components\identifier\BaseIdentifier

@@ -4,8 +4,8 @@ namespace app\modules\process2\services\data;
 
 use app\modules\process2\components\identifier\BaseIdentifier;
 use app\modules\process2\dto\data\DataItemDto;
-use app\modules\process2\services\data\IdentifierMapProvider;
 use app\modules\process2\services\data\loader\DataItemLoaderInterface;
+use app\modules\process2\services\identifiers\map\IdentifierMapProvider;
 use Yii;
 
 

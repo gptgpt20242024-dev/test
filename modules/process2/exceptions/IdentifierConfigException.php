@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\services\data;
+namespace app\modules\process2\exceptions;
 
 final class IdentifierConfigException extends \RuntimeException
 {

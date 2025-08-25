@@ -2,17 +2,15 @@
 
 namespace app\modules\process2;
 
-use app\modules\process\assets\ProcessAsset;
 use app\modules\process2\components\identifier\BaseIdentifier;
-use app\modules\process2\services\data\BasicIdentifierMapValidator;
 use app\modules\process2\services\data\DataItemIdentifierRegistry;
-use app\modules\process2\services\data\IdentifierMapProvider;
-use app\modules\process2\services\data\IdentifierPresetRegistry;
-use app\modules\process2\services\data\LazyFinalMapProvider;
+use app\modules\process2\services\identifiers\IdentifierPresetRegistry;
+use app\modules\process2\services\identifiers\map\IdentifierMapProvider;
+use app\modules\process2\services\identifiers\map\LazyFinalMapProvider;
+use app\modules\process2\validators\BasicIdentifierMapValidator;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
-use yii\web\Application as WebApplication;
 
 class ProcessModule extends Module implements BootstrapInterface
 {
@@ -28,43 +26,35 @@ class ProcessModule extends Module implements BootstrapInterface
     {
         parent::init();
         Yii::configure($this, require(__DIR__ . '/config/web.php'));
-
-        if (Yii::$app instanceof WebApplication) {
-            ProcessAsset::register(Yii::$app->view);
-        }
     }
 
     public function bootstrap($app)
     {
         $c = Yii::$container;
 
-        if (!$c->has(IdentifierPresetRegistry::class, true)) {
+        $c->get(IdentifierPresetRegistry::class)->add(self::PRESET_NAME, $this->loadPreset());
+
+        if (!$c->has(IdentifierPresetRegistry::class)) {
             $c->setSingleton(IdentifierPresetRegistry::class, IdentifierPresetRegistry::class);
         }
 
-        if (!$c->has(DataItemIdentifierRegistry::class, true)) {
+        if (!$c->has(DataItemIdentifierRegistry::class)) {
             $c->setSingleton(DataItemIdentifierRegistry::class, DataItemIdentifierRegistry::class);
         }
 
-        // Publish module preset
-        $c->get(IdentifierPresetRegistry::class)->add(self::PRESET_NAME, $this->loadPreset());
+        if (!$c->has(IdentifierMapProvider::class, true)) {
+            $includes = $this->identifierIncludes;
+            $overrides = $this->identifierOverrides;
 
-        // Respect existing provider bound by application
-        if ($c->has(IdentifierMapProvider::class, true)) {
-            return;
+            $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
+                return new LazyFinalMapProvider(
+                    $c->get(IdentifierPresetRegistry::class),
+                    $includes,
+                    $overrides,
+                    new BasicIdentifierMapValidator(BaseIdentifier::class)
+                );
+            });
         }
-
-        $includes  = $this->identifierIncludes;
-        $overrides = $this->identifierOverrides;
-
-        $c->setSingleton(IdentifierMapProvider::class, function () use ($c, $includes, $overrides) {
-            return new LazyFinalMapProvider(
-                $c->get(IdentifierPresetRegistry::class),
-                $includes,
-                $overrides,
-                new BasicIdentifierMapValidator(BaseIdentifier::class)
-            );
-        });
     }
 
     /**
@@ -72,6 +62,6 @@ class ProcessModule extends Module implements BootstrapInterface
      */
     private function loadPreset(): array
     {
-        return (require __DIR__ . '/config/identifiers.php')['identifiers'] ?? [];
+        return (require __DIR__ . '/config/identifiers.php') ?? [];
     }
 }

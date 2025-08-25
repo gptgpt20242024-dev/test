@@ -1,10 +1,11 @@
 <?php
 
-namespace app\modules\process2\services\data;
+namespace app\modules\process2\services\identifiers\map;
 
 use app\modules\process2\components\identifier\BaseIdentifier;
-use app\modules\process2\services\data\IdentifierConfigException;
-use app\modules\process2\services\data\IdentifierMapValidator;
+use app\modules\process2\exceptions\IdentifierConfigException;
+use app\modules\process2\services\identifiers\IdentifierPresetRegistry;
+use app\modules\process2\validators\IdentifierMapValidator;
 
 /**
  * Builds the final identifier map on first access, after all presets are registered.
@@ -12,18 +13,26 @@ use app\modules\process2\services\data\IdentifierMapValidator;
 final class LazyFinalMapProvider implements IdentifierMapProvider
 {
     /** @var array<int, class-string<BaseIdentifier>>|null */
-    private ?array $map = null;
+    private ?array                   $map       = null;
+    private IdentifierPresetRegistry $registry;
+    private                          $includes  = '*';
+    private array                    $overrides = [];
+    private ?IdentifierMapValidator  $validator = null;
 
     /**
      * @param array<string>|string $includes Names of presets to include or '*' for all
      * @param array<int, class-string<BaseIdentifier>> $overrides Final overrides from application config
      */
     public function __construct(
-        private IdentifierPresetRegistry $registry,
-        private array|string $includes = '*',
-        private array $overrides = [],
-        private ?IdentifierMapValidator $validator = null,
+        IdentifierPresetRegistry $registry,
+        $includes = '*',
+        array $overrides = [],
+        ?IdentifierMapValidator $validator = null
     ) {
+        $this->validator = $validator;
+        $this->overrides = $overrides;
+        $this->includes = $includes;
+        $this->registry = $registry;
     }
 
     public function getMap(): array
@@ -58,7 +67,6 @@ final class LazyFinalMapProvider implements IdentifierMapProvider
 
         foreach ($this->overrides as $id => $class) {
             $final[$id]  = $class;
-            $seenBy[$id] = 'override';
         }
 
         if ($this->validator) {

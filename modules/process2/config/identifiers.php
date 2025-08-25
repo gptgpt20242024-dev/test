@@ -5,9 +5,7 @@ use app\modules\process2\components\identifier\type\IdentifierTariff;
 use app\modules\process2\components\identifier\type\IdentifierUser;
 
 return [
-    'identifiers' => [
-        50 => IdentifierUser::class,
-        60 => IdentifierTariff::class,
-        61 => IdentifierService::class,
-    ],
+    50 => IdentifierUser::class,
+    60 => IdentifierTariff::class,
+    61 => IdentifierService::class,
 ];
