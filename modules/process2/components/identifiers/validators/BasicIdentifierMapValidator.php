@@ -3,7 +3,7 @@
 namespace app\modules\process2\components\identifiers\validators;
 
 use app\modules\process2\components\identifiers\BaseIdentifier;
-use app\modules\process2\exceptions\IdentifierConfigException;
+use app\modules\process2\exceptions\identifiers\IdentifierConfigException;
 
 final class BasicIdentifierMapValidator implements IdentifierMapValidator
 {
