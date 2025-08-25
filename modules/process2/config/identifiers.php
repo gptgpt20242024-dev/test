@@ -1,8 +1,8 @@
 <?php
 
-use app\modules\process2\components\identifiers\types\IdentifierService;
-use app\modules\process2\components\identifiers\types\IdentifierTariff;
-use app\modules\process2\components\identifiers\types\IdentifierUser;
+use app\modules\process2\identifier\type\IdentifierService;
+use app\modules\process2\identifier\type\IdentifierTariff;
+use app\modules\process2\identifier\type\IdentifierUser;
 
 return [
     50 => IdentifierUser::class,
