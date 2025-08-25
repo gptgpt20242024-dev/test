@@ -2,12 +2,16 @@
 
 namespace app\modules\process\services;
 
+use app\modules\order\models\TaskProcessLinks;
 use app\modules\process\factories\ArchiveDataDtoFactory;
+use app\modules\process\models\_query\Req3TasksDataItemsQuery;
+use app\modules\process\models\identifiers\Req3Identifiers;
 use app\modules\process\models\Req3FunctionBase;
 use app\modules\process\models\task\Req3Tasks;
 use app\modules\process\models\task\Req3TasksStepHistory;
 use app\modules\process\models\task_archive\TaskArchive;
 use app\modules\process\models\task_archive\TaskArchiveEntity;
+use app\modules\process\models\task_data\Req3TasksDataItemProjectTree;
 use app\modules\process\models\task_data\Req3TasksDataItems;
 use app\modules\process\models\task_opers\Req3TaskOperOnline;
 use app\modules\process\models\template_steps\Req3TemplateSteps;
@@ -116,10 +120,32 @@ class ProcessTaskArchiveService
 
     protected function collectTaskData(Req3Tasks $task): array
     {
+        $history = $this->collectTaskHistory($task);
+        $relations      = $this->collectTaskRelations($task);
+
+        $timeExecute = $task->getTimeExecute();
+        $deviationInfo = $task->getDeviationInfo();
+        $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
+
+        $dataItems = [];
+        foreach ($task->data as $item) {
+            $dataItems[] = ArchiveDataDtoFactory::serializeDataItem($item);
+        }
+
+        return [
+            'history'          => $history,
+            'time_execute'   => $timeExecute,
+            'deviation_info' => $deviationInfo,
+            'time_template'  => $timeTemplate,
+            'data_items'     => $dataItems,
+            'relations'     => $relations,
+        ];
+    }
+
+    protected function collectTaskHistory(Req3Tasks $task): array
+    {
         $items = [];
-
         $before_full_info_transitions = false;
-
         foreach ($task->step_history as $history) {
             if (!$before_full_info_transitions) {
                 $items[] = $this->buildTransitionItem($history);
@@ -155,24 +181,93 @@ class ProcessTaskArchiveService
                 $items[] = $itemStep;
             }
         }
+        return $items;
+    }
 
-        $timeExecute = $task->getTimeExecute();
-        $deviationInfo = $task->getDeviationInfo();
-        $timeTemplate = ($task->version->execute_minutes ?? 0) * 60;
+    protected function collectTaskRelations(Req3Tasks $task): array
+    {
+        $relations = [];
 
-        $dataItems = [];
-        foreach ($task->data as $item) {
-            $dataItems[] = ArchiveDataDtoFactory::serializeDataItem($item);
+        if ($task->crash_link) {
+            $relations['crash'] = [
+                'crash_id' => $task->crash_link->crash_id,
+            ];
         }
 
-        return [
-            'history'          => $items,
-            'time_execute'   => $timeExecute,
-            'deviation_info' => $deviationInfo,
-            'time_template'  => $timeTemplate,
-            'data_items'     => $dataItems,
-        ];
+        /** @var TaskProcessLinks $orderLink */
+        $orderLink = TaskProcessLinks::find()->andWhere(['process_id' => $task->id])->one();
+        if ($orderLink) {
+            $relations['order'] = [
+                'task_id' => $orderLink->task_id,
+                'project_process_ids' => TaskProcessLinks::find()->select('process_id')->andWhere(['project_id' => $orderLink->project_id])->column(),
+            ];
+        }
 
+        if ($task->started_from_email) {
+            $relations['email'] = [
+                'from' => $task->started_from_email->from,
+                'date' => $task->started_from_email->date_email_received,
+            ];
+        }
+
+        if ($task->parent_task) {
+            $parentTask = $task->parent_task->task ?? null;
+            $relations['parent_task'] = [
+                'task_id' => $task->parent_task->task_id,
+                'name' => $parentTask->name ?? null,
+            ];
+        }
+
+        $parentProjectTaskIds = Req3TasksDataItemProjectTree::find()->alias('node')
+            ->andWhere(['node.target_task_id' => $task->id])
+            ->innerJoinWith(['root.item' => function (Req3TasksDataItemsQuery $query) {
+                $query->andOnCondition(['type' => Req3Identifiers::TYPE_PROJECT_TREE]);
+                $query->andOnCondition(['link_type' => Req3TasksDataItems::LINK_TYPE_TASK]);
+                $query->andOnCondition(['is_deleted' => 0]);
+                $query->innerJoinWith('task task', false);
+            }], false)
+            ->select(['task.id'])->column();
+        if (!empty($parentProjectTaskIds)) {
+            $relations['parent_project_tasks'] = [];
+            $parentProjectTasks = Req3Tasks::find()->id($parentProjectTaskIds)->all();
+            foreach ($parentProjectTasks as $parentProjectTask) {
+                $relations['parent_project_tasks'][] = [
+                    'id' => $parentProjectTask->id,
+                    'name' => $parentProjectTask->name,
+                ];
+            }
+        }
+
+        if (count($task->sub_tasks) > 0) {
+            foreach ($task->sub_tasks as $subTask) {
+                $sub = $subTask->sub_task;
+                $info = [
+                    'id' => $subTask->sub_task_id,
+                    'name' => $sub->name ?? null,
+                ];
+                if ($sub) {
+                    if ($sub->step->is_last ?? false) {
+                        $relations['sub_tasks']['last'][] = $info;
+                    } elseif ($sub->step->is_auto ?? false) {
+                        $relations['sub_tasks']['auto'][] = $info;
+                    } else {
+                        $relations['sub_tasks']['active'][] = $info;
+                    }
+                } else {
+                    $relations['sub_tasks']['other'][] = $info;
+                }
+            }
+        }
+
+        if (count($task->started_orders) > 0) {
+            foreach ($task->started_orders as $order) {
+                $relations['sub_orders'][] = [
+                    'order_id' => $order->order_id,
+                ];
+            }
+        }
+
+        return $relations;
     }
 
     protected function buildTransitionItem(Req3TasksStepHistory $history): array

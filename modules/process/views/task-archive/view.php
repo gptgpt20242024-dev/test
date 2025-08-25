@@ -1,7 +1,6 @@
 <?php
 
 use app\modules\process\models\template_steps\Req3TemplateSteps;
-use app\modules\process\widgets\IdentifierViewWidget;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -13,15 +12,18 @@ use yii\helpers\Html;
 /* @var $identifierIds int[] */
 /* @var $identifiers app\modules\process\models\identifiers\Req3Identifiers[] */
 /* @var $dataItems app\modules\process\models\task_data\Req3TasksDataItems[][] */
+/* @var $relations array */
+
 
 $this->title = "Архив: ".$task->task_name;
 $this->params['breadcrumbs'][] = ['label' => "Архив", 'url' => ['index']];
 $this->params['breadcrumbs'][] = $task->task_name;
 
-
 $statuses = Req3TemplateSteps::LAST_STATUS_NAMES;
 $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
 ?>
+
+
 
 <div class="task-archive-view">
     <div class="card mb-3">
@@ -39,6 +41,22 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
         </div>
     </div>
 
+    <?php if (!empty($relations)): ?>
+        <div class="card" data-relations-card="1">
+            <div class="card-header" data-spoiler data-container="[data-relations-card]" data-content="[data-relations-content]">
+                <i class="fas fa-caret-up" data-open="1"></i>
+                <i class="fas fa-caret-down" data-close="1"></i>
+                Связи
+            </div>
+            <div class="card-body" data-relations-content="1"  style="display: none; background: #dedede">
+                <?= $this->render('relations', [
+                    'relations' => $relations
+                ]) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+
     <div class="card" data-history-card="1">
         <div class="card-header" data-spoiler data-container="[data-history-card]" data-content="[data-history-content]">
             <i class="fas fa-caret-up" data-open="1"></i>
@@ -55,6 +73,7 @@ $statusLabel = $statuses[$task->step_last_status] ?? $task->step_last_status;
             ]) ?>
         </div>
     </div>
+
 
 
     <?php if (!empty($identifiers)): ?>
