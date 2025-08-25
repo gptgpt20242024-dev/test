@@ -3,9 +3,7 @@
 use yii\helpers\ArrayHelper;
 
 $config = [
-    'params' => [
-
-    ]
+    'params' => [],
 ];
 
 if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'web.local.php')) {
