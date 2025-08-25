@@ -1,9 +1,10 @@
 <?php
+namespace app\modules\process2\components\identifiers\validators;
 
-namespace app\modules\process2\validators;
+use app\modules\process2\components\identifiers\BaseIdentifier;
 
 /**
- * @template T of \app\modules\process2\components\identifier\BaseIdentifier
+ * @template T of BaseIdentifier
  */
 interface IdentifierMapValidator
 {

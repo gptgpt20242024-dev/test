@@ -7,8 +7,11 @@ use app\modules\process2\services\data\DataItemIdentifierRegistry;
 
 final class DataItemBatchLoader
 {
-    public function __construct(private DataItemIdentifierRegistry $registry)
+    private DataItemIdentifierRegistry $registry;
+
+    public function __construct(DataItemIdentifierRegistry $registry)
     {
+        $this->registry = $registry;
     }
 
     /**

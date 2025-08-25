@@ -20,11 +20,7 @@ class TaskDataTestController extends Controller
 
         /** @var DataItemDtoFactory $factory */
         $factory = Yii::$container->get(DataItemDtoFactory::class);
-
-        $dtos = [];
-        foreach ($models as $model) {
-            $dtos[] = $factory->create($model);
-        }
+        $dtos = $factory->createAll($models);
 
         /** @var DataItemBatchLoader $batchLoader */
         $batchLoader = Yii::$container->get(DataItemBatchLoader::class);

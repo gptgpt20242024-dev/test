@@ -15,6 +15,15 @@ final class DataItemDtoFactory
         $this->registry = $registry;
     }
 
+    public function createAll(array $models): array
+    {
+        $dtos = [];
+        foreach ($models as $model) {
+            $dtos[] = $this->create($model);
+        }
+        return $dtos;
+    }
+
     public function create(Req3TasksDataItems $model): DataItemDto
     {
         /** @var class-string<DataItemDto> $class */

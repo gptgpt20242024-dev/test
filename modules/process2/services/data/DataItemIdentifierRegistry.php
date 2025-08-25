@@ -2,10 +2,10 @@
 
 namespace app\modules\process2\services\data;
 
-use app\modules\process2\components\identifier\BaseIdentifier;
+use app\modules\process2\components\identifiers\BaseIdentifier;
+use app\modules\process2\components\identifiers\presets\map\IdentifierMapProvider;
 use app\modules\process2\dto\data\DataItemDto;
 use app\modules\process2\services\data\loader\DataItemLoaderInterface;
-use app\modules\process2\services\identifiers\map\IdentifierMapProvider;
 use Yii;
 
 
@@ -22,6 +22,11 @@ class DataItemIdentifierRegistry
     /** @var array<string, DataItemLoaderInterface> */
     private array $loaderInstances = [];
 
+
+    /**
+     * @param int $type
+     * @return class-string<BaseIdentifier>
+     */
     public function getClassByType(int $type): ?string
     {
         return $this->map[$type] ?? null;

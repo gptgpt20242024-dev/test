@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\process2\validators;
+namespace app\modules\process2\components\identifiers\validators;
 
-use app\modules\process2\components\identifier\BaseIdentifier;
+use app\modules\process2\components\identifiers\BaseIdentifier;
 use app\modules\process2\exceptions\IdentifierConfigException;
 
 final class BasicIdentifierMapValidator implements IdentifierMapValidator

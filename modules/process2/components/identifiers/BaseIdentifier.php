@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\components\identifier;
+namespace app\modules\process2\components\identifiers;
 
 use app\modules\process\widgets\identifier\{BaseIdentifierInputWidget, BaseIdentifierViewWidget};
 use app\modules\process2\dto\data\DataItemDto;

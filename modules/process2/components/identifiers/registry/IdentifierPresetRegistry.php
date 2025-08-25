@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\process2\services\identifiers;
+namespace app\modules\process2\components\identifiers\presets;
 
-use app\modules\process2\components\identifier\BaseIdentifier;
+use app\modules\process2\components\identifiers\BaseIdentifier;
 
 final class IdentifierPresetRegistry
 {
