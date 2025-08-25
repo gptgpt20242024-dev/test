@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\process2\data\service\loader;
+namespace app\modules\process2\data\services\loader;
 
 use app\modules\process2\data\dto\DataItemDto;
-use app\modules\process2\data\service\DataItemIdentifierRegistry;
+use app\modules\process2\data\services\DataItemIdentifierRegistry;
 
 final class DataItemBatchLoader
 {

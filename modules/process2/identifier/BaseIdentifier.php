@@ -2,9 +2,10 @@
 
 namespace app\modules\process2\identifier;
 
-use app\modules\process2\data\widget\{BaseIdentifierInputWidget, BaseIdentifierViewWidget};
+use app\modules\process2\data\widgets\edit\BaseIdentifierInputWidget;
+use app\modules\process2\data\widgets\view\BaseIdentifierViewWidget;
 use app\modules\process2\data\dto\DataItemDto;
-use app\modules\process2\data\service\loader\DataItemLoaderInterface;
+use app\modules\process2\data\services\loader\DataItemLoaderInterface;
 
 abstract class BaseIdentifier
 {

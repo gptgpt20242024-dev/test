@@ -2,11 +2,11 @@
 
 namespace app\modules\process2\identifier\type;
 
-use app\modules\process2\data\widget\type\edit\ServiceInputWidget;
-use app\modules\process2\data\widget\type\view\ServiceViewWidget;
+use app\modules\process2\data\widgets\edit\types\ServiceInputWidget;
+use app\modules\process2\data\widgets\view\types\ServiceViewWidget;
 use app\modules\process2\identifier\BaseIdentifier;
 use app\modules\process2\data\dto\type\DataItemServiceDto;
-use app\modules\process2\data\service\loader\type\ServiceDataItemLoader;
+use app\modules\process2\data\services\loader\type\ServiceDataItemLoader;
 
 final class IdentifierService extends BaseIdentifier
 {

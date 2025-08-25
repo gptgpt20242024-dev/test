@@ -1,8 +1,8 @@
 <?php
-namespace app\modules\process2\data\widget\type\edit;
+namespace app\modules\process2\data\widgets\edit\types;
 
 use app\modules\process2\data\dto\type\DataItemServiceDto;
-use app\modules\process2\data\widget\BaseIdentifierInputWidget;
+use app\modules\process2\data\widgets\edit\BaseIdentifierInputWidget;
 use yii\helpers\Html;
 
 final class ServiceInputWidget extends BaseIdentifierInputWidget

@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\process2\data\service\loader\type;
+namespace app\modules\process2\data\services\loader\type;
 
 use app\modules\address\models\MapAddresses;
 use app\modules\process2\data\dto\type\DataItemAddressDto;
-use app\modules\process2\data\service\loader\DataItemLoaderInterface;
+use app\modules\process2\data\services\loader\DataItemLoaderInterface;
 use yii\helpers\ArrayHelper;
 
 final class AddressDataItemLoader implements DataItemLoaderInterface

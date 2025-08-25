@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\process2\data\factory;
+namespace app\modules\process2\data\factories;
 
 use app\modules\process\models\task_data\Req3TasksDataItems;
 use app\modules\process2\data\dto\DataItemDto;
-use app\modules\process2\data\service\DataItemIdentifierRegistry;
+use app\modules\process2\data\services\DataItemIdentifierRegistry;
 
 final class DataItemDtoFactory
 {

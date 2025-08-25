@@ -7,7 +7,7 @@ use app\modules\process2\identifier\preset\IdentifierPresetRegistry;
 use app\modules\process2\identifier\preset\map\IdentifierMapProvider;
 use app\modules\process2\identifier\preset\map\LazyFinalMapProvider;
 use app\modules\process2\identifier\preset\validator\BasicIdentifierMapValidator;
-use app\modules\process2\data\service\DataItemIdentifierRegistry;
+use app\modules\process2\data\services\DataItemIdentifierRegistry;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
