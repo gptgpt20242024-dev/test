@@ -1,5 +1,9 @@
 <?php
-use app\modules\process\services\data_item\identifier\{IdentifierUser, IdentifierService, IdentifierTariff};
+
+use app\modules\process2\components\identifier\{type\IdentifierTariff};
+use app\modules\process2\components\identifier\type\IdentifierService;
+use app\modules\process2\components\identifier\type\IdentifierUser;
+
 return [
     'identifiers' => [
         50 => IdentifierUser::class,

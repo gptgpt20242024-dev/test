@@ -1,5 +1,6 @@
 <?php
-use app\modules\process\services\data_item\DataItemIdentifierRegistry;
+
+use app\modules\process2\services\data\DataItemIdentifierRegistry;
 
 return [
     'container' => [

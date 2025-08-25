@@ -4,8 +4,9 @@ namespace app\modules\process\controllers;
 
 use app\controllers\BaseController;
 use app\modules\process\models\task_data\Req3TasksDataItems;
-use app\modules\process\services\data_item\{DataItemBatchLoader, DataItemDtoFactory};
 use app\modules\process\widgets\identifier\IdentifierViewTypeWidget;
+use app\modules\process2\factories\data\{DataItemDtoFactory};
+use app\modules\process2\services\data\loader\DataItemBatchLoader;
 use Yii;
 
 class TaskDataTestController extends BaseController
