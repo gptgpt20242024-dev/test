@@ -42,7 +42,7 @@ class ProcessModule extends Module implements BootstrapInterface
             $c->setSingleton(IdentifierRegistry::class, IdentifierRegistry::class);
         }
 
-        if (!$c->has(IdentifierMapProvider::class, true)) {
+        if (!$c->has(IdentifierMapProvider::class)) {
             $includes = $this->identifierPresetIncludes;
             $overrides = $this->identifierOverrides;
 
