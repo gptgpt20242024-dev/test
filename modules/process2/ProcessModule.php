@@ -2,12 +2,12 @@
 
 namespace app\modules\process2;
 
-use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\identifier\presets\IdentifierPresetRegistry;
-use app\modules\process2\identifier\presets\map\IdentifierMapProvider;
-use app\modules\process2\identifier\presets\map\LazyFinalMapProvider;
-use app\modules\process2\identifier\presets\validator\BasicIdentifierMapValidator;
-use app\modules\process2\data\services\DataItemIdentifierRegistry;
+use app\modules\process2\components\identifier\identifiers\BaseIdentifier;
+use app\modules\process2\components\identifier\presets\IdentifierPresetRegistry;
+use app\modules\process2\components\identifier\presets\map\IdentifierMapProvider;
+use app\modules\process2\components\identifier\presets\map\LazyFinalMapProvider;
+use app\modules\process2\components\identifier\presets\validator\BasicIdentifierMapValidator;
+use app\modules\process2\components\identifier\services\IdentifierRegistry;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
@@ -38,8 +38,8 @@ class ProcessModule extends Module implements BootstrapInterface
             $c->setSingleton(IdentifierPresetRegistry::class, IdentifierPresetRegistry::class);
         }
 
-        if (!$c->has(DataItemIdentifierRegistry::class)) {
-            $c->setSingleton(DataItemIdentifierRegistry::class, DataItemIdentifierRegistry::class);
+        if (!$c->has(IdentifierRegistry::class)) {
+            $c->setSingleton(IdentifierRegistry::class, IdentifierRegistry::class);
         }
 
         if (!$c->has(IdentifierMapProvider::class, true)) {
