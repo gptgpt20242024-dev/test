@@ -1,12 +1,12 @@
 <?php
 
-namespace app\modules\process2\identifier\type;
+namespace app\modules\process2\identifier\types;
 
 use app\modules\process2\data\widgets\edit\types\TariffInputWidget;
 use app\modules\process2\data\widgets\view\types\TariffViewWidget;
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\data\dto\type\DataItemTariffDto;
-use app\modules\process2\data\services\loader\type\TariffDataItemLoader;
+use app\modules\process2\data\dto\types\DataItemTariffDto;
+use app\modules\process2\data\services\loaders\types\TariffDataItemLoader;
 
 final class IdentifierTariff extends BaseIdentifier
 {

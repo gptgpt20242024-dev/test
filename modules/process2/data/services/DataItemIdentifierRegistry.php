@@ -3,9 +3,9 @@
 namespace app\modules\process2\data\services;
 
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\identifier\preset\map\IdentifierMapProvider;
+use app\modules\process2\identifier\presets\map\IdentifierMapProvider;
 use app\modules\process2\data\dto\DataItemDto;
-use app\modules\process2\data\services\loader\DataItemLoaderInterface;
+use app\modules\process2\data\services\loaders\DataItemLoaderInterface;
 use Yii;
 
 

@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\process2\identifier\preset\validator;
+namespace app\modules\process2\identifier\presets\validator;
 
 use app\modules\process2\identifier\BaseIdentifier;
 

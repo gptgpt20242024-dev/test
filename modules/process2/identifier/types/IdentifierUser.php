@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\process2\identifier\type;
+namespace app\modules\process2\identifier\types;
 
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\data\dto\type\DataItemUserDto;
-use app\modules\process2\data\services\loader\type\UserDataItemLoader;
+use app\modules\process2\data\dto\types\DataItemUserDto;
+use app\modules\process2\data\services\loaders\types\UserDataItemLoader;
 
 final class IdentifierUser extends BaseIdentifier
 {

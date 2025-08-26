@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\process2\identifier\preset\map;
+namespace app\modules\process2\identifier\presets\map;
 
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\identifier\preset\IdentifierPresetRegistry;
-use app\modules\process2\identifier\preset\validator\IdentifierMapValidator;
-use app\modules\process2\identifier\exception\IdentifierConfigException;
+use app\modules\process2\identifier\presets\IdentifierPresetRegistry;
+use app\modules\process2\identifier\presets\validator\IdentifierMapValidator;
+use app\modules\process2\identifier\exceptions\IdentifierConfigException;
 
 /**
  * Builds the final identifier map on first access, after all presets are registered.

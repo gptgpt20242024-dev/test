@@ -1,7 +1,7 @@
 <?php
 namespace app\modules\process2\data\widgets\view\types;
 
-use app\modules\process2\data\dto\type\DataItemTariffDto;
+use app\modules\process2\data\dto\types\DataItemTariffDto;
 use app\modules\process2\data\widgets\view\BaseIdentifierViewWidget;
 
 final class TariffViewWidget extends BaseIdentifierViewWidget

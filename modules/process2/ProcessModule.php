@@ -3,10 +3,10 @@
 namespace app\modules\process2;
 
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\identifier\preset\IdentifierPresetRegistry;
-use app\modules\process2\identifier\preset\map\IdentifierMapProvider;
-use app\modules\process2\identifier\preset\map\LazyFinalMapProvider;
-use app\modules\process2\identifier\preset\validator\BasicIdentifierMapValidator;
+use app\modules\process2\identifier\presets\IdentifierPresetRegistry;
+use app\modules\process2\identifier\presets\map\IdentifierMapProvider;
+use app\modules\process2\identifier\presets\map\LazyFinalMapProvider;
+use app\modules\process2\identifier\presets\validator\BasicIdentifierMapValidator;
 use app\modules\process2\data\services\DataItemIdentifierRegistry;
 use Yii;
 use yii\base\BootstrapInterface;

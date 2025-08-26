@@ -6,7 +6,7 @@ use app\controllers\BaseController;
 use app\modules\process\models\task_data\Req3TasksDataItems;
 use app\modules\process2\data\widgets\view\IdentifierViewTypeWidget;
 use app\modules\process2\data\factories\DataItemDtoFactory;
-use app\modules\process2\data\services\loader\DataItemBatchLoader;
+use app\modules\process2\data\services\loaders\DataItemBatchLoader;
 use Yii;
 use yii\web\Controller;
 

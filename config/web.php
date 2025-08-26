@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\process2\identifier\type\IdentifierUser;
+use app\modules\process2\identifier\types\IdentifierUser;
 use app\modules\process2\ProcessModule;
 
 $config = [

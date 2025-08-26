@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\process2\data\services\loader\type;
+namespace app\modules\process2\data\services\loaders\types;
 
-use app\modules\process2\data\dto\type\DataItemUserDto;
-use app\modules\process2\data\services\loader\DataItemLoaderInterface;
+use app\modules\process2\data\dto\types\DataItemUserDto;
+use app\modules\process2\data\services\loaders\DataItemLoaderInterface;
 use app\modules\user\models\Users;
 use yii\helpers\ArrayHelper;
 

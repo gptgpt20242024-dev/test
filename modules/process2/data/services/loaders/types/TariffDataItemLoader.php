@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\process2\data\services\loader\type;
+namespace app\modules\process2\data\services\loaders\types;
 
-use app\modules\process2\data\dto\type\DataItemTariffDto;
-use app\modules\process2\data\services\loader\DataItemLoaderInterface;
+use app\modules\process2\data\dto\types\DataItemTariffDto;
+use app\modules\process2\data\services\loaders\DataItemLoaderInterface;
 use app\modules\utm\models\Tariffs;
 use yii\helpers\ArrayHelper;
 

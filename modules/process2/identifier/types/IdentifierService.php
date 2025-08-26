@@ -1,12 +1,12 @@
 <?php
 
-namespace app\modules\process2\identifier\type;
+namespace app\modules\process2\identifier\types;
 
 use app\modules\process2\data\widgets\edit\types\ServiceInputWidget;
 use app\modules\process2\data\widgets\view\types\ServiceViewWidget;
 use app\modules\process2\identifier\BaseIdentifier;
-use app\modules\process2\data\dto\type\DataItemServiceDto;
-use app\modules\process2\data\services\loader\type\ServiceDataItemLoader;
+use app\modules\process2\data\dto\types\DataItemServiceDto;
+use app\modules\process2\data\services\loaders\types\ServiceDataItemLoader;
 
 final class IdentifierService extends BaseIdentifier
 {

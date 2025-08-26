@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\process2\identifier\preset;
+namespace app\modules\process2\identifier\presets;
 
 use app\modules\process2\identifier\BaseIdentifier;
 
